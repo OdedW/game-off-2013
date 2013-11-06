@@ -13,8 +13,8 @@
             KEY_LCTRL: 17,
             
             //world constants
-            WORLD_WIDTH: 640,
-            WORLD_HEIGHT: 480,
+            WORLD_WIDTH: 720,
+            WORLD_HEIGHT: 528,
             FPS:30,
             GRAVITY: 2,
             MOVE_SPEED: 10,

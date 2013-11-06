@@ -1,6 +1,6 @@
 ﻿define('gameManager',
-    ['createjs', 'assetManager'],
-    function (createjs, assetManager) {
+    ['createjs', 'assetManager', 'CreatureEntity', 'constants'],
+    function (createjs, assetManager, CreatureEntity, constants) {
         var stage,
             canvasWidth,
             canvasHeight,
@@ -39,12 +39,18 @@
             },
             initializeGraphics = function () {
                 //tileManager.init(stage, world, collidables);
-                stage.addChild(world);
+                var bg = new createjs.Bitmap(assetManager.images['bg']);
+                stage.addChild(bg);
 
+                stage.addChild(world);
                 stage.addChild(fpsLabel);
                 
                 setupKeys();
                 
+                
+                var creature = new CreatureEntity(240, 140);
+                world.addChild(creature.view);
+
                 createjs.Ticker.requestRAF = true;
                 createjs.Ticker.setFPS(constants.FPS);
                 createjs.Ticker.addEventListener("tick", tick);

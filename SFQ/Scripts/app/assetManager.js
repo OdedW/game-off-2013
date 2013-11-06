@@ -8,7 +8,8 @@
             },
             manifest = [
                 //images
-                //{ src: "/Content/Images/background1.jpg", id: "background1" },
+                { src: "/Content/Images/oryx_creatures.png", id: "creatures" },
+                { src: "/Content/Images/bg.png", id: "bg" }
 
                 //sounds
                 //{ src: "/Content/Sounds/Jump.wav", id: sounds.jump },
