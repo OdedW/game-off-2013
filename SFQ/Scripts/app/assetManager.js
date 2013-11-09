@@ -9,7 +9,10 @@
             manifest = [
                 //images
                 { src: "/Content/Images/oryx_creatures.png", id: "creatures" },
-                { src: "/Content/Images/bg.png", id: "bg" }
+                { src: "/Content/Images/bg.png", id: "bg" },
+                { src: "/Content/Images/table.png", id: "table" },
+                { src: "/Content/Images/cashier.png", id: "cashier" }
+
 
                 //sounds
                 //{ src: "/Content/Sounds/Jump.wav", id: sounds.jump },

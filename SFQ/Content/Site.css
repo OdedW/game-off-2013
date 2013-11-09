@@ -38,8 +38,8 @@ input[type="checkbox"].input-validation-error {
   margin-top: 90px;
 }
 .container #canvas-container {
-  height: 480px;
-  width: 640px;
+  height: 528px;
+  width: 720px;
   margin: auto;
   background-color: white;
   position: relative;

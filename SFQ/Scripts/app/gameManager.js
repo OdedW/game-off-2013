@@ -1,17 +1,18 @@
 ﻿define('gameManager',
-    ['createjs', 'assetManager', 'CreatureEntity', 'constants'],
-    function (createjs, assetManager, CreatureEntity, constants) {
+    ['createjs', 'assetManager', 'CreatureEntity', 'constants', 'Queue'],
+    function (createjs, assetManager, CreatureEntity, constants, Queue) {
         var stage,
             canvasWidth,
             canvasHeight,
             world,
-            collidables = [],
+            queues = [],
             fpsLabel, progressLabel,
             init = function() {
                 //create stage
                 canvasWidth = $('#game-canvas').width();
                 canvasHeight = $('#game-canvas').height();
                 stage = new createjs.Stage("game-canvas");
+                stage.enableMouseOver(10);
                 world = new createjs.Container();
                 
                 //fps
@@ -42,20 +43,26 @@
                 var bg = new createjs.Bitmap(assetManager.images['bg']);
                 stage.addChild(bg);
 
+                createQueue(3, 2, 8, 5);
+                createQueue(5, 2, 8, 5);
+                createQueue(7, 2, 8, 5);
                 stage.addChild(world);
-                stage.addChild(fpsLabel);
+                //stage.addChild(fpsLabel);
                 
                 setupKeys();
                 
-                
-                var creature = new CreatureEntity(240, 140);
-                world.addChild(creature.view);
-
                 createjs.Ticker.requestRAF = true;
                 createjs.Ticker.setFPS(constants.FPS);
                 createjs.Ticker.addEventListener("tick", tick);
             },
-            
+            createQueue = function (row, col, min, max) {
+                var queue = new Queue(row, col, min, max);
+                var views = queue.getViews();
+                for (var i = 0; i < views.length; i++) {
+                    world.addChild(views[i]);
+                }
+                queues.push(queue);
+            },
             //Key handling
             setupKeys = function(){
                 document.onkeydown = handleKeyDown;
@@ -67,6 +74,14 @@
             handleKeyDown = function (e) {
                 if (!keysDown[e.keyCode]) {
                     keysDown[e.keyCode] = true;
+
+                    if (e.keyCode == constants.KEY_S) {
+                        for (var i = 0; i < queues.length; i++) {
+                            for (var j = 0; j < queues[i].npcs.length; j++) {
+                                queues[i].npcs[j].toggleItemCountLabel();
+                            }
+                        }
+                    }
                     
                 }
             },

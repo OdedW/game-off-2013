@@ -85,10 +85,17 @@
             getBounds = function(obj) {
                 var bounds = { x: obj.x, y: obj.y, width: obj.getBounds().width, height: obj.getBounds().height };
                 return bounds;
+            },
+            getAbsolutePositionByGridPosition = function (row, col) {
+                return {
+                    x: col * constants.TILE_SIZE,
+                    y: row * constants.TILE_SIZE
+                }
             };
         return {
             getBounds: getBounds,
             calculateIntersection: calculateIntersection,
-            calculateCollision:calculateCollision
+            calculateCollision: calculateCollision,
+            getAbsolutePositionByGridPosition: getAbsolutePositionByGridPosition
         };
     });

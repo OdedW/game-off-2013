@@ -125,7 +125,9 @@
     <Content Include="Content\bootstrap.css" />
     <Content Include="Content\bootstrap.min.css" />
     <Content Include="Content\Images\bg.png" />
+    <Content Include="Content\Images\cashier.png" />
     <Content Include="Content\Images\oryx_creatures.png" />
+    <Content Include="Content\Images\table.png" />
     <Content Include="Content\Site.css">
       <DependentUpon>Site.less</DependentUpon>
     </Content>
@@ -139,9 +141,13 @@
     <Content Include="Scripts\app\assetManager.js" />
     <Content Include="Scripts\app\BaseEntity.js" />
     <Content Include="Scripts\app\bootstrapper.js" />
+    <Content Include="Scripts\app\CashierEntity.js" />
     <Content Include="Scripts\app\constants.js" />
     <Content Include="Scripts\app\CreatureEntity.js" />
     <Content Include="Scripts\app\gameManager.js" />
+    <Content Include="Scripts\app\NpcEntity.js" />
+    <Content Include="Scripts\app\Queue.js" />
+    <Content Include="Scripts\app\text.js" />
     <Content Include="Scripts\app\tileManager.js" />
     <Content Include="Scripts\app\utils.js" />
     <Content Include="Scripts\lib\bootstrap.js" />
