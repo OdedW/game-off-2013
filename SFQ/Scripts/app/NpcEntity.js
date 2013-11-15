@@ -9,18 +9,18 @@
                 this._super(x, y);
 
                 this.itemCountLabel = new createjs.Container();
-                this.itemCountLabel.x = this.size.w-5;
+                this.itemCountLabel.x = this.size.w - 5;
                 this.itemCountLabel.y = this.size.h - 5;
-                this.itemCountLabel.alpha = 0;
+                // this.itemCountLabel.alpha = 0;
                 var circle = new createjs.Shape();
                 circle.graphics.beginFill("gray").drawCircle(0, 0, 11).beginFill("black").drawCircle(0, 0, 9);
                 circle.alpha = 0.7;
 
-                var text = new createjs.Text(this.itemCount.toString(), "14px Arial", "white")
-                text.x = -4;
-                text.y = -8;
-
-                this.itemCountLabel.addChild(circle, text)
+                this.itemCountText = new createjs.Text(this.itemCount.toString(), "14px Arial", "white");
+                this.itemCountText.x = -4;
+                this.itemCountText.y = -8;
+                this.firstInLine = false;
+                this.itemCountLabel.addChild(circle, this.itemCountText);
 
                 this.view.addChild(this.itemCountLabel);
             },
@@ -37,6 +37,12 @@
                     this.hideItemCount();
                 else if (this.itemCountLabel.alpha === 0)
                     this.showItemCount();
+            },
+            removeItem: function () {
+                if (this.itemCount > 0) {
+                    this.itemCount--;
+                    this.itemCountText.text = this.itemCount;
+                }
             }
-        })
+        });
     });

@@ -26,5 +26,10 @@
             CREATURES_IN_ROW: 18,
             CREATURES_IN_COLUMN: 11,
             TILE_SIZE: 48,
+
+            //time
+            BASE_SCANE_TIME: 1000, //ms
+            MIN_MOVEMENT_SPEED: 400, //ms per move
+            MAX_MOVEMENT_SPEED: 900, //ms per move
         };
     });

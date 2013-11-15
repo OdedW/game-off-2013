@@ -1,6 +1,6 @@
 ﻿define('gameManager',
-    ['createjs', 'assetManager', 'CreatureEntity', 'constants', 'Queue'],
-    function (createjs, assetManager, CreatureEntity, constants, Queue) {
+    ['createjs', 'assetManager', 'CreatureEntity', 'constants', 'Queue', 'tileManager'],
+    function (createjs, assetManager, CreatureEntity, constants, Queue, tileManager) {
         var stage,
             canvasWidth,
             canvasHeight,
@@ -40,7 +40,7 @@
             },
             initializeGraphics = function () {
                 //tileManager.init(stage, world, collidables);
-                var bg = new createjs.Bitmap(assetManager.images['bg']);
+                var bg = new createjs.Bitmap(assetManager.images.bg);
                 stage.addChild(bg);
 
                 createQueue(3, 2, 8, 5);
@@ -61,6 +61,12 @@
                 for (var i = 0; i < views.length; i++) {
                     world.addChild(views[i]);
                 }
+                queue.viewAdded.add(function (view) {
+                    world.addChild(view);
+                });
+                queue.viewRemoved.add(function (view) {
+                    world.removeChild(view);
+                });
                 queues.push(queue);
             },
             //Key handling
@@ -75,11 +81,17 @@
                 if (!keysDown[e.keyCode]) {
                     keysDown[e.keyCode] = true;
 
-                    if (e.keyCode == constants.KEY_S) {
+                    if (e.keyCode === constants.KEY_S) {
                         for (var i = 0; i < queues.length; i++) {
                             for (var j = 0; j < queues[i].npcs.length; j++) {
                                 queues[i].npcs[j].toggleItemCountLabel();
                             }
+                        }
+                    }
+
+                    else if (e.keyCode === constants.KEY_SPACE) {
+                        for (var i = 0; i < queues.length; i++) {
+                            queues[i].leave();
                         }
                     }
                     
@@ -93,7 +105,9 @@
             //Tick
             tick = function (evt) {
                 fpsLabel.text = evt.currentTarget.getFPS().toFixed(2);
-                //tileManager.tick(hero);
+                for (var i = 0; i < queues.length; i++) {
+                    queues[i].tick(evt);
+                }
                 stage.update();
             };
         

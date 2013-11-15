@@ -11,7 +11,8 @@
                 { src: "/Content/Images/oryx_creatures.png", id: "creatures" },
                 { src: "/Content/Images/bg.png", id: "bg" },
                 { src: "/Content/Images/table.png", id: "table" },
-                { src: "/Content/Images/cashier.png", id: "cashier" }
+                { src: "/Content/Images/cashier.png", id: "cashier" },
+                { src: "/Content/Images/oryx_items.png", id: "items" }
 
 
                 //sounds

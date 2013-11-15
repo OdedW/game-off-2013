@@ -13,18 +13,10 @@ namespace SFQ.Controllers
             return View();
         }
 
-        public ActionResult About()
+        public ActionResult TileMap()
         {
-            ViewBag.Message = "Your application description page.";
-
-            return View();
-        }
-
-        public ActionResult Contact()
-        {
-            ViewBag.Message = "Your contact page.";
-
-            return View();
+            var path = Server.MapPath("/Content/tilemap.json");
+            return Content(System.IO.File.ReadAllText(path));
         }
     }
 }

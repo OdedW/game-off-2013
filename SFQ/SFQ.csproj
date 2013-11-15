@@ -127,6 +127,7 @@
     <Content Include="Content\Images\bg.png" />
     <Content Include="Content\Images\cashier.png" />
     <Content Include="Content\Images\oryx_creatures.png" />
+    <Content Include="Content\Images\oryx_items.png" />
     <Content Include="Content\Images\table.png" />
     <Content Include="Content\Site.css">
       <DependentUpon>Site.less</DependentUpon>
@@ -152,6 +153,7 @@
     <Content Include="Scripts\app\utils.js" />
     <Content Include="Scripts\lib\bootstrap.js" />
     <Content Include="Scripts\lib\bootstrap.min.js" />
+    <Content Include="Content\tileMap.json" />
     <None Include="Scripts\lib\jquery-1.10.2.intellisense.js" />
     <Content Include="Scripts\lib\jquery-1.10.2.js" />
     <Content Include="Scripts\lib\jquery-1.10.2.min.js" />

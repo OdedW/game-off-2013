@@ -13,9 +13,11 @@
 
 @section Scripts {
     <script src="//code.createjs.com/createjs-2013.09.25.min.js"></script>
+<script>
+    window.tilemap = @Html.Action("TileMap");
+</script>
 
     @Scripts.Render(
         "~/bundles/jsapplibs")
-    <script>
-    </script>
+    
 }
