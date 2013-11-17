@@ -1,11 +1,13 @@
 ﻿define('gameManager',
-    ['createjs', 'assetManager', 'CreatureEntity', 'constants', 'Queue', 'tileManager'],
-    function (createjs, assetManager, CreatureEntity, constants, Queue, tileManager) {
+    ['createjs', 'assetManager', 'CreatureEntity', 'constants', 'Queue', 'tileManager', 'PlayerEntity'],
+    function (createjs, assetManager, CreatureEntity, constants, Queue, tileManager, PlayerEntity) {
         var stage,
             canvasWidth,
             canvasHeight,
             world,
             queues = [],
+            paused = false,
+            player,
             fpsLabel, progressLabel,
             init = function() {
                 //create stage
@@ -41,28 +43,37 @@
             initializeGraphics = function () {
                 //tileManager.init(stage, world, collidables);
                 var bg = new createjs.Bitmap(assetManager.images.bg);
-                stage.addChild(bg);
+                world.addChild(bg);
 
-                createQueue(3, 2, 8, 5);
-                createQueue(5, 2, 8, 5);
-                createQueue(7, 2, 8, 5);
+                createQueue(2, 2, 8, 5, 3, 4);
+                createQueue(5, 2, 8, 5, 5, 5);
+                createQueue(8, 2, 8, 5, 9, 6);
+                player = new PlayerEntity(1, 0);
+                world.addChild(player.view);
                 stage.addChild(world);
                 //stage.addChild(fpsLabel);
-                
+
+                //assetManager.playSound('supermarket', 0.08, true);
+                //assetManager.playSound('bossa', 1, true);
+
                 setupKeys();
                 
                 createjs.Ticker.requestRAF = true;
                 createjs.Ticker.setFPS(constants.FPS);
                 createjs.Ticker.addEventListener("tick", tick);
+
             },
-            createQueue = function (row, col, min, max) {
-                var queue = new Queue(row, col, min, max);
+            createQueue = function (row, col, min, max, entry, exit) {
+                var queue = new Queue(row, col, min, max, entry, exit);
                 var views = queue.getViews();
                 for (var i = 0; i < views.length; i++) {
                     world.addChild(views[i]);
                 }
                 queue.viewAdded.add(function (view) {
+                    world.removeChild(player.view); //player is always on top
                     world.addChild(view);
+                    world.addChild(player.view);
+
                 });
                 queue.viewRemoved.add(function (view) {
                     world.removeChild(view);
@@ -81,18 +92,34 @@
                 if (!keysDown[e.keyCode]) {
                     keysDown[e.keyCode] = true;
 
-                    if (e.keyCode === constants.KEY_S) {
+                    //movement
+                    if (e.keyCode === constants.KEY_S || e.keyCode === constants.KEY_DOWN) {
+                        player.move(0, 1);
+                    }
+                    else if (e.keyCode === constants.KEY_A || e.keyCode === constants.KEY_LEFT) {
+                        player.move(-1, 0);
+                    }
+                    else if (e.keyCode === constants.KEY_W || e.keyCode === constants.KEY_UP) {
+                        player.move(0, -1);
+                    }
+                    else if (e.keyCode === constants.KEY_D || e.keyCode === constants.KEY_RIGHT) {
+                        player.move(1, 0);
+                    }
+                    else if (e.keyCode === constants.KEY_SPACE) {
                         for (var i = 0; i < queues.length; i++) {
-                            for (var j = 0; j < queues[i].npcs.length; j++) {
-                                queues[i].npcs[j].toggleItemCountLabel();
-                            }
+                            queues[0].allNpcs[0].say('You made a mistake there');
                         }
                     }
 
-                    else if (e.keyCode === constants.KEY_SPACE) {
-                        for (var i = 0; i < queues.length; i++) {
-                            queues[i].leave();
-                        }
+                    else if (e.keyCode === constants.KEY_P) {
+                        togglePause();
+                    }
+
+                    else if (e.keyCode === constants.KEY_M) {
+                        assetManager.toggleMute();
+                    }
+                    else {
+                        console.log(e.keyCode);
                     }
                     
                 }
@@ -105,10 +132,16 @@
             //Tick
             tick = function (evt) {
                 fpsLabel.text = evt.currentTarget.getFPS().toFixed(2);
-                for (var i = 0; i < queues.length; i++) {
-                    queues[i].tick(evt);
+                if (!paused) {
+                    for (var i = 0; i < queues.length; i++) {
+                        queues[i].tick(evt);
+                    }
                 }
                 stage.update();
+            },
+            togglePause = function () {
+                paused = !paused;
+                createjs.Tween.get(world).to({ alpha: paused ? 0.4 : 1 }, 200, createjs.Ease.quadIn);
             };
         
 

@@ -21,9 +21,19 @@
                 return name;
             };
                 
-        
+        mistakeTexts = [
+            'You made a mistake there...',
+            'No way this costs 10 gold',
+            'Did you scan my coupons?',
+            'It should be 2 for 1 picklocks!'
+        ],
+        getRandomText = function (arr) {
+            return arr[Math.floor(Math.random() * arr.length)];
+        };
         return {
-            getCashierName: getCashierName
+            getCashierName: getCashierName,
+            mistakeTexts: mistakeTexts,
+            getRandomText: getRandomText
         };
 });
 

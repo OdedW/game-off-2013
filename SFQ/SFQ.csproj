@@ -126,6 +126,7 @@
     <Content Include="Content\bootstrap.min.css" />
     <Content Include="Content\Images\bg.png" />
     <Content Include="Content\Images\cashier.png" />
+    <Content Include="Content\Images\cash_register.png" />
     <Content Include="Content\Images\oryx_creatures.png" />
     <Content Include="Content\Images\oryx_items.png" />
     <Content Include="Content\Images\table.png" />
@@ -135,9 +136,15 @@
     <Content Include="Content\Site.min.css">
       <DependentUpon>Site.less</DependentUpon>
     </Content>
+    <Content Include="Content\Sounds\beep.mp3" />
+    <Content Include="Content\Sounds\bossa.mp3" />
+    <Content Include="Content\Sounds\supermarket.mp3" />
+    <Content Include="Content\Sounds\walk.mp3" />
     <Content Include="favicon.ico" />
     <Content Include="fonts\glyphicons-halflings-regular.svg" />
     <Content Include="Global.asax" />
+    <Content Include="Content\04B_03__.TTF" />
+    <Content Include="Content\Minecraftia.ttf" />
     <None Include="Content\Site.less" />
     <Content Include="Scripts\app\assetManager.js" />
     <Content Include="Scripts\app\BaseEntity.js" />
@@ -146,14 +153,22 @@
     <Content Include="Scripts\app\constants.js" />
     <Content Include="Scripts\app\CreatureEntity.js" />
     <Content Include="Scripts\app\gameManager.js" />
+    <Content Include="Scripts\app\GameScreen.js" />
     <Content Include="Scripts\app\NpcEntity.js" />
+    <Content Include="Scripts\app\PlayerEntity.js" />
     <Content Include="Scripts\app\Queue.js" />
+    <Content Include="Scripts\app\Screen.js" />
+    <Content Include="Scripts\app\screenManager.js" />
     <Content Include="Scripts\app\text.js" />
     <Content Include="Scripts\app\tileManager.js" />
     <Content Include="Scripts\app\utils.js" />
     <Content Include="Scripts\lib\bootstrap.js" />
     <Content Include="Scripts\lib\bootstrap.min.js" />
     <Content Include="Content\tileMap.json" />
+    <Content Include="Content\Sounds\beep.ogg" />
+    <Content Include="Content\Sounds\supermarket.ogg" />
+    <Content Include="Content\Sounds\bossa.ogg" />
+    <Content Include="Content\Sounds\walk.ogg" />
     <None Include="Scripts\lib\jquery-1.10.2.intellisense.js" />
     <Content Include="Scripts\lib\jquery-1.10.2.js" />
     <Content Include="Scripts\lib\jquery-1.10.2.min.js" />

@@ -2,7 +2,8 @@
     ['CreatureEntity', 'createjs'], function (CreatureEntity, createjs) {
         return CreatureEntity.extend({
             init: function (row, col) {
-                this.itemCount = Math.floor(Math.random() * 3 + 3);
+                this.initialItemCount = this.itemCount = Math.floor(Math.random() * 3 + 3);
+                this.mistakeWasMade = false;
                 this._super(row, col);
             },
             createView: function (x, y) {
@@ -21,7 +22,6 @@
                 this.itemCountText.y = -8;
                 this.firstInLine = false;
                 this.itemCountLabel.addChild(circle, this.itemCountText);
-
                 this.view.addChild(this.itemCountLabel);
             },
             showItemCount: function () {

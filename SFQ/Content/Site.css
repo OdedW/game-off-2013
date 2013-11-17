@@ -41,11 +41,19 @@ input[type="checkbox"].input-validation-error {
   height: 528px;
   width: 720px;
   margin: auto;
-  background-color: white;
+  background-color: black;
   position: relative;
 }
 .container #canvas-container canvas {
   width: 100%;
   height: 100%;
   position: absolute;
+}
+@font-face {
+  font-family: 04B_03__;
+  src: url('04B_03__.TTF') format('truetype');
+}
+@font-face {
+  font-family: Minecraftia;
+  src: url('Minecraftia.ttf') format('truetype');
 }
