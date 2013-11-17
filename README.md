@@ -1,6 +1,6 @@
 ## Super Fantasy Queue
 
-Every hero and every monster need to take a break and get some groceries at some point, a little troll's milk, some spider cornflakes, or head to the home depot for oil for ye old armor. 
+Every hero and every monster needs to take a break and get some groceries at some point, a little troll's milk, some spider cornflakes, or head to the home depot for oil for ye old armor. 
 
 It is then that they have to make the most important decision of their lives
 
