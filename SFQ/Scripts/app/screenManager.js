@@ -9,9 +9,9 @@
                 currentScreen = screens[0];
             };
 
-        init();
         return {
+            init: init,
             gameScreen: screens[0],
-            currentScreen: currentScreen
+            getCurrentScreen: function () { return currentScreen; }
         };
 });

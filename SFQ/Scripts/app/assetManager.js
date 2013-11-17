@@ -15,7 +15,7 @@
 
 
                 //sounds
-                { src: "/Content/Sounds/walk.mp3|/Content/Sounds/walk.ogg", id: 'walk' },
+                { src: "/Content/Sounds/walk.mp3|/Content/Sounds/walk.ogg", id: 'walk' }
                 //{ src: "/Content/Sounds/beep.mp3|/Content/Sounds/beep.ogg", id: 'beep' },
                 //{ src: "/Content/Sounds/supermarket.mp3|/Content/Sounds/supermarke t.ogg", id: 'supermarket' },
                 //{ src: "/Content/Sounds/bossa.mp3|/Content/Sounds/bossa.ogg", id: 'bossa' },
