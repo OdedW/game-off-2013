@@ -1,5 +1,11 @@
 ## Super Fantasy Queue
 
+Every hero and every monster need to take a break and get some groceries at some point, a little troll's milk, some spider cornflakes, or head to the home depot for oil for ye old armor. 
+
+It is then that they have to make the most important decision of their lives
+
+![Super Fantasy Queue](http://i.imgur.com/My7PTSU.gif)
+
 ## License
 
 All graphic assets are by [Oryx Design Labs](http://oryxdesignlab.com) and licensed to InjaGames. They cannot be re-used in any way.
