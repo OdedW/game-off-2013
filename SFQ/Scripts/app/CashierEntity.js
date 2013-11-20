@@ -71,6 +71,8 @@
 
                 this.view.addChild(this.description);
                 this.view.mouseEnabled = true;
+
+                this.itemCountLabel.alpha = 0;
             }
 
         });

@@ -2,21 +2,20 @@
     ['createjs'],
     function (createjs) {
         return Class.extend({
-            init: function () {
+            init: function() {
                 this.mainView = new createjs.Container();
             },
-            handleKeyDown: function (e) {
+            handleKeyDown: function(e) {
 
             },
-            handleKeyUp: function (e) {
+            handleKeyUp: function(e) {
 
             },
-            activate:function(){
+            activate: function() {
 
             },
-            tick: function (evt) {
+            tick: function(evt) {
 
             }
-
-        })
+        });
     });

@@ -90,7 +90,7 @@
                 return {
                     x: col * constants.TILE_SIZE,
                     y: row * constants.TILE_SIZE
-                }
+                };
             };
         return {
             getBounds: getBounds,

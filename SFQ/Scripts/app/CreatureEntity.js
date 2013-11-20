@@ -3,10 +3,11 @@
     function (createjs, assetManager, BaseEntity, utils, constants, tileManager) {
         return BaseEntity.extend({
             init: function (row, col, index) {
+                this.setItemCount();
                 var creatureRow = Math.floor(Math.random() * constants.CREATURES_IN_COLUMN);
                 var creatureColumn = Math.floor(Math.random() * constants.CREATURES_IN_ROW);
                 var creatureIndex = creatureRow * constants.CREATURES_IN_ROW * 2 + creatureColumn;
-                creatreIndex = creatureIndex === 0 ? 1 : creatureIndex;
+                creatureIndex = creatureIndex === 0 ? 1 : creatureIndex;
                 this.creatureIndex = index === undefined ? creatureIndex : index;
                 var pos = utils.getAbsolutePositionByGridPosition(row, col);
                 this.currentRow = row;
@@ -17,7 +18,10 @@
                 this.timeSinceLastMove = 0;
                 this._super(pos.x, pos.y);
                 this.finishedMoving = $.Callbacks();
-                tileManager.collisionMap[this.currentRow][this.currentColumn] = true;
+                tileManager.collisionMap[this.currentRow][this.currentColumn] = this;
+            },
+            setItemCount:function() {
+                this.initialItemCount = this.itemCount = 0;
             },
             setSize: function () {
                 this.size = { w: 48, h: 48 };
@@ -56,9 +60,25 @@
                 this.view.addChild(this.avatar);
                 this.view.x = x;
                 this.view.y = y;
+                
+                this.itemCountLabel = new createjs.Container();
+                this.itemCountLabel.x = this.size.w - 5;
+                this.itemCountLabel.y = this.size.h - 5;
+                // this.itemCountLabel.alpha = 0;
+                var circle = new createjs.Shape();
+                circle.graphics.beginFill("gray").drawCircle(0, 0, 11).beginFill("black").drawCircle(0, 0, 9);
+                circle.alpha = 0.7;
+
+                this.itemCountText = new createjs.Text(this.itemCount.toString(), "14px Arial", "white");
+                this.itemCountText.x = -4;
+                this.itemCountText.y = -8;
+                this.firstInLine = false;
+                this.itemCountLabel.addChild(circle, this.itemCountText);
+                this.view.addChild(this.itemCountLabel);
             },
             tick: function (evt) {
                 if (this.shouldMove) {
+                    this.checkForDestinationReached(); //destination was point of beginning
                     this.timeSinceLastMove += evt.delta;
                     if (this.timeSinceLastMove >= this.movementSpeed) {
                         var nextCol = this.currentColumn + Math.sign(this.movementDestination.col - this.currentColumn);
@@ -75,18 +95,21 @@
                         }
                         this.setPosition(nextRow, nextCol);
                         this.timeSinceLastMove = 0;
-                        if (this.currentColumn === this.movementDestination.col &&
-                            this.currentRow === this.movementDestination.row) {
-                            this.shouldMove = false;
-                            this.finishedMoving.fire();
-                        }
+                        this.checkForDestinationReached(); //destination reached
                     }
+                }
+            },
+            checkForDestinationReached: function(){
+                if (this.currentColumn === this.movementDestination.col &&
+                            this.currentRow === this.movementDestination.row) {
+                    this.shouldMove = false;
+                    this.finishedMoving.fire();
                 }
             },
             setPosition: function (row, col) {
                 //set position in collisionMap
                 tileManager.collisionMap[this.currentRow][this.currentColumn] = false;
-                tileManager.collisionMap[row][col] = true;
+                tileManager.collisionMap[row][col] = this;
 
                 this.currentRow = row;
                 this.currentColumn = col;
@@ -108,6 +131,26 @@
                         }, 100);
                 }, timeout);
 
+            },
+            removeItem: function () {
+                if (this.itemCount > 0) {
+                    this.itemCount--;
+                    this.itemCountText.text = this.itemCount;
+                }
+            },
+            showItemCount: function () {
+                if (this.itemCountLabel.alpha === 0)
+                    createjs.Tween.get(this.itemCountLabel).to({ alpha: 1 }, 100, createjs.Ease.quadIn);
+            },
+            hideItemCount: function () {
+                if (this.itemCountLabel.alpha === 1)
+                    createjs.Tween.get(this.itemCountLabel).to({ alpha: 0 }, 200, createjs.Ease.quadIn);
+            },
+            toggleItemCountLabel: function () {
+                if (this.itemCountLabel.alpha === 1)
+                    this.hideItemCount();
+                else if (this.itemCountLabel.alpha === 0)
+                    this.showItemCount();
             }
         });
 });

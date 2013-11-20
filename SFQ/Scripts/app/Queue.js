@@ -2,9 +2,10 @@
     ['createjs', 'NpcEntity', 'constants', 'utils', 'assetManager', 'CashierEntity', 'tileManager','text'],
     function (createjs, NpcEntity, constants, utils, assetManager, CashierEntity, tileManager,text) {
         return Class.extend({
-            init: function (row, col, maxCreatures, minCreatures, entryRow, exitRow) {
+            init: function (player, row, col, maxCreatures, minCreatures, entryRow, exitRow) {
                 this.row = row;
                 this.col = col;
+                this.player = player;
                 this.entryRow = entryRow;
                 this.exitRow = exitRow;
                 this.maxCreatures = maxCreatures;
@@ -16,9 +17,10 @@
                 this.mistakeDialogStarted = false;
                 //create cashier and table
                 this.cashier = new CashierEntity(row - 1, col + this.maxCreatures + 1);
-                tileManager.collisionMap[this.cashier.currentRow][this.cashier.currentColumn] = true;
+                tileManager.collisionMap[this.cashier.currentRow][this.cashier.currentColumn] = this.cashier;
                 this.table = new createjs.Bitmap(assetManager.images.table);
                 this.tablePosition = { row: row, col: col + this.maxCreatures + 1 };
+                this.firstInLinePosition = { row: row, col: col + this.maxCreatures };
                 var pos = utils.getAbsolutePositionByGridPosition(this.tablePosition.row, this.tablePosition.col);
                 this.table.x = pos.x;
                 this.table.y = pos.y + 6;
@@ -36,7 +38,6 @@
                     this.allNpcs.push(creature);
                     this.setNpcToAdvanceInQueue(creature);
                 }
-                this.npcsInQueue[0].firstInLine = true;
 
                 //callbacks
                 this.viewAdded = $.Callbacks();
@@ -61,44 +62,47 @@
                 for (var i = 0; i < this.allNpcs.length; i++) {
                     this.allNpcs[i].tick(evt);
                 }
-                if (this.npcsInQueue.length > 0 && this.npcsInQueue[0].firstInLine && !this.mistakeDialogStarted) {
-                    this.timeSinceLastScan += evt.delta;
-                    if (this.timeSinceLastScan >= constants.BASE_SCANE_TIME) {
-                        this.timeSinceLastScan = 0;
-                        this.scan();
+                var creature = tileManager.collisionMap[this.firstInLinePosition.row][this.firstInLinePosition.col];
+                if (creature) {
+                    if (!this.mistakeDialogStarted) {
+                        this.timeSinceLastScan += evt.delta;
+                        if (this.timeSinceLastScan >= constants.BASE_SCANE_TIME) {
+                            this.timeSinceLastScan = 0;
+                            this.scan(creature);
+                        }
                     }
                 }
-
+                
                 //check if need to add new npc
                 if (this.npcsInQueue.length < constants.MAX_CREATURES_IN_QUEUE) {
                     this.timeSinceLastNpcAddCheck += evt.delta;
                     if (this.timeSinceLastNpcAddCheck > constants.TIME_TO_MAYBE_ADD_NPC_TO_QUEUE) {
                         this.timeSinceLastNpcAddCheck = 0;
                         if (Math.random() > constants.CHANCE_OF_NEW_NPC) {
-                            this.addNewNpc();
+                          //  this.addNewNpc();
                         }
                     }
                 }
             },
-            scan: function () {
+            scan: function (creature) {
                 if (this.currentItem) {
                     this.viewRemoved.fire(this.currentItem);
                 }
-                if (this.npcsInQueue[0].itemCount > 0) {
-                    this.npcsInQueue[0].removeItem();
+                if (creature.itemCount > 0) {
+                    creature.removeItem();
                     this.currentItem = this.getRandomItem();
                     var pos = utils.getAbsolutePositionByGridPosition(this.row, this.col + this.maxCreatures + 1);
                     this.currentItem.x = pos.x + 27;
                     this.currentItem.y = pos.y + 9;
                     this.viewAdded.fire(this.currentItem);
                     //assetManager.playSound('beep', 0.1);
-                } else {
+                } else  if (this.npcsInQueue.indexOf(creature) >= 0) { //npc
                     //chance for mistake
-                    if (!this.npcsInQueue[0].mistakeWasMade && Math.random() * 10 > this.cashier.accuracy) {
+                    if (!creature.mistakeWasMade && Math.random() * 10 > this.cashier.accuracy) {
                         this.startMistakeDialog();
                     }
                     else {
-                        this.npcsInQueue[0].hideItemCount();
+                        creature.hideItemCount();
                         this.leave();
                     }
                 }
@@ -129,17 +133,12 @@
             },
             setNpcToAdvanceInQueue: function (npc) {
                 npc.movementDestination = { row: this.tablePosition.row, col: this.tablePosition.col - 1 };
-                npc.finishedMoving.add(function setFirstInLine() {
-                    npc.finishedMoving.remove(setFirstInLine);
-                    npc.firstInLine = true;
-                });
                 npc.shouldMove = true;
 
             },
             leave: function () {
                 //init the npc to leave
                 var npcLeaving = this.npcsInQueue[0];
-                npcLeaving.firstInLine = false;
                 this.npcsInQueue.splice(0, 1);
                 npcLeaving.shouldMove = true;
 
