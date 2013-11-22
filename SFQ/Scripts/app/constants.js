@@ -23,6 +23,7 @@
             MIN_MOVEMENT_SPEED: 400, //ms per move
             MAX_MOVEMENT_SPEED: 900, //ms per move
             TIME_TO_MAYBE_ADD_NPC_TO_QUEUE: 4000, //ms
+            TIME_BETWEEN_CALLS_TO_MOVE_UP: 5000,
             
             //keys
             KEY_A: 65,

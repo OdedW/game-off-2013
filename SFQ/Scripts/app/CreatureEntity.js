@@ -12,14 +12,9 @@
                 var pos = utils.getAbsolutePositionByGridPosition(row, col);
                 this.currentRow = row;
                 this.currentColumn = col;
-                this.movementSpeed = Math.floor(Math.random() * (constants.MAX_MOVEMENT_SPEED - constants.MIN_MOVEMENT_SPEED)) + constants.MIN_MOVEMENT_SPEED;
-                this.shouldMove = false;
-                this.movementDestination = null;
-                this.timeSinceLastMove = 0;
+
                 this._super(pos.x, pos.y);
-                this.finishedMoving = $.Callbacks();
                 tileManager.collisionMap[this.currentRow][this.currentColumn] = this;
-                
             },
             setItemCount:function() {
                 this.initialItemCount = this.itemCount = 0;
@@ -76,35 +71,7 @@
                 this.itemCountLabel.addChild(circle, this.itemCountText);
                 this.view.addChild(this.itemCountLabel);
             },
-            tick: function (evt) {
-                if (this.shouldMove) {
-                    this.checkForDestinationReached(); //destination was point of beginning
-                    this.timeSinceLastMove += evt.delta;
-                    if (this.timeSinceLastMove >= this.movementSpeed) {
-                        var nextCol = this.currentColumn + Math.sign(this.movementDestination.col - this.currentColumn);
-                        var nextRow = this.currentRow + Math.sign(this.movementDestination.row - this.currentRow);
-                        //check for collision
-                        if (tileManager.collisionMap[nextRow][nextCol]) //occupied
-                        {
-                            nextRow = this.currentRow; //try to move horizontally
-                            if (tileManager.collisionMap[nextRow][nextCol]) //occupied
-                            {
-                                this.timeSinceLastMove = 0;
-                                return; //wait in place
-                            }
-                        }
-                        this.setPosition(nextRow, nextCol);
-                        this.timeSinceLastMove = 0;
-                        this.checkForDestinationReached(); //destination reached
-                    }
-                }
-            },
-            checkForDestinationReached: function(){
-                if (this.currentColumn === this.movementDestination.col &&
-                            this.currentRow === this.movementDestination.row) {
-                    this.shouldMove = false;
-                    this.finishedMoving.fire();
-                }
+            tick: function(evt) {
             },
             setPosition: function (row, col) {
                 //set position in collisionMap

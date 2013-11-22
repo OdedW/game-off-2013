@@ -80,7 +80,7 @@
                     this.queues[i].tick(evt);
                 }
             },
-            reset: function() {
+            reset: function () {
                 tileManager.clearCollisionMap();
                 this.init();
             },

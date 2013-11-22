@@ -12,10 +12,14 @@
                 this.maxCreatures = maxCreatures;
                 this.minCreatures = minCreatures;
                 this.npcsInQueue = [];
-                this.allNpcs = [];
+                this.allNpcs = [];                
+                this.mistakeDialogStarted = false;
+                
+                //times
                 this.timeSinceLastScan = 0;
                 this.timeSinceLastNpcAddCheck = 0;
-                this.mistakeDialogStarted = false;
+                this.timeSinceLastCalledToMoveUp = -1;
+                
                 //create cashier and table
                 this.cashier = new CashierEntity(row - 1, col + this.maxCreatures + 1);
                 tileManager.collisionMap[this.cashier.currentRow][this.cashier.currentColumn] = this.cashier;
@@ -34,11 +38,8 @@
                 //create npcs in queue
                 this.numOfCreatures = Math.round(Math.random() * (maxCreatures - minCreatures) + minCreatures);
                 for (var i = 0; i < this.numOfCreatures; i++) {
-                    var creature = new NpcEntity(row, col + this.maxCreatures - i);
-                    creature.placeInLine = i;
-                    this.npcsInQueue.push(creature);
-                    this.allNpcs.push(creature);
-                    this.setNpcToAdvanceInQueue(creature);
+                    this.createNewNpc(this.row, col + this.maxCreatures - i);
+
                 }
 
                 //callbacks
@@ -49,6 +50,18 @@
                 this.player.moved.add(function() {
                     that.handlePlayerMove.apply(that); //fire in context
                 });
+            },
+            createNewNpc: function (row, col) {
+                var that = this;
+                var npc = new NpcEntity(row, col);
+                npc.placeInLine = this.npcsInQueue.length;
+                this.npcsInQueue.push(npc);
+                this.allNpcs.push(npc);
+                this.setNpcToAdvanceInQueue(npc);
+                npc.playerIsBlockingMove.add(function (sender) {
+                    that.npcIsBlockedByPlayer.apply(that, [sender]);
+                });
+                return npc;
             },
             getViews: function () {
                 var views = [];
@@ -65,7 +78,13 @@
                 return views;
 
             },
-            tick: function (evt) {
+            tick: function(evt) {
+                //advance timeSinceLastCalledToMoveUp
+                if (this.timeSinceLastCalledToMoveUp != -1) {
+                    this.timeSinceLastCalledToMoveUp += evt.delta;
+                    if (this.timeSinceLastCalledToMoveUp > constants.TIME_BETWEEN_CALLS_TO_MOVE_UP)
+                        this.timeSinceLastCalledToMoveUp = -1;
+                }
                 for (var i = 0; i < this.allNpcs.length; i++) {
                     this.allNpcs[i].tick(evt);
                 }
@@ -173,21 +192,16 @@
             addNewNpc: function () {
                 if (tileManager.collisionMap[this.entryRow][0]) //someone is already occupying that square
                     return;
-                var creature = new NpcEntity(this.entryRow, 0);
-                creature.placeInLine = this.npcsInQueue.length;
-                this.npcsInQueue.push(creature);
-                this.allNpcs.push(creature);
-                this.setNpcToAdvanceInQueue(creature);
-                this.viewAdded.fire(creature.view);
-            },
+                var npc = this.createNewNpc(this.entryRow, 0);
+                this.viewAdded.fire(npc.view);
+            },           
             handlePlayerMove: function () {
-                
                 if (this.player.currentRow == this.row) {
                     if (this.npcsInQueue.length > 1 &&
-                       this.npcsInQueue[this.npcsInQueue.length-1].currentColumn < this.player.currentColumn) { //last
+                        this.npcsInQueue[this.npcsInQueue.length - 1].currentColumn < this.player.currentColumn) { //last
                         if (!this.playerInQueue) { //cut in line
                             var cutee = null;
-                            for (var i = 0; i < this.npcsInQueue.length; i++) {//get the closest cutee
+                            for (var i = 0; i < this.npcsInQueue.length; i++) { //get the closest cutee
                                 if (this.npcsInQueue[i].currentColumn < this.player.currentColumn) { //yell 
                                     if (!cutee)
                                         cutee = this.npcsInQueue[i];
@@ -198,16 +212,29 @@
                                 }
                             }
                             if (cutee) {
-                                if (cutee.placeInLine == this.npcsInQueue.length -1 && //last in line
-                                    this.player.currentColumn - cutee.currentColumn > 1) //didn't reach end of the line yet
+                                if (cutee.placeInLine == this.npcsInQueue.length - 1 && //last in line
+                                    this.player.currentColumn - cutee.currentColumn > 1) //didn't reach end of the line yet, not quite cutting in line
                                     cutee.say(text.getRandomText(text.notQuiteCutInLineTexts));
-                                else
+                                else {
                                     cutee.say(text.getRandomText(text.cutInLineTexts));
+                                    this.playerCutInLine = true;
+                                }
                             }
                         }
                     }
+                } else {
+                    this.playerCutInLine = false;
                 }
                 this.playerInQueue = this.player.currentRow == this.row;
+            },
+            npcIsBlockedByPlayer:function(npc) {
+                if (this.timeSinceLastCalledToMoveUp == -1 && //enough time passed
+                    !this.playerCutInLine &&
+                    this.player.currentColumn < this.tablePosition.col-1 && //not first in line
+                    !tileManager.collisionMap[this.row][this.player.currentColumn + 1]) { //has place to advance
+                    npc.say(text.getRandomText(text.playerHoldingUpLine));
+                    this.timeSinceLastCalledToMoveUp = 0;
+                }
             }
         });
     });

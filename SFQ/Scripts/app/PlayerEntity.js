@@ -5,6 +5,7 @@
             init: function (row, col) {
                 this._super(row, col, 0);
                 this.winState = $.Callbacks();
+                this.isPlayer = true;
                 this.moved = $.Callbacks();
             },
             createView: function(x, y) {

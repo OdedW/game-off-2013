@@ -44,6 +44,12 @@
                 'Sneaky bastard',
                 "Think you're clever"
             ],
+            playerHoldingUpLine = [
+              'Move up pal!',
+              'Wake up!',
+                "We're gonna be here all day",
+                'Take your time buddy'
+            ],
 
 
         getRandomText = function (arr) {
@@ -55,7 +61,8 @@
             getRandomText: getRandomText,
             bumpTexts: bumpTexts,
             cutInLineTexts: cutInLineTexts,
-            notQuiteCutInLineTexts: notQuiteCutInLineTexts
+            notQuiteCutInLineTexts: notQuiteCutInLineTexts,
+            playerHoldingUpLine: playerHoldingUpLine
         };
     });
 

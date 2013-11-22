@@ -42,7 +42,8 @@
                 //assetManager.playSound('bossa', 1, true);
 
                 setupKeys();
-                
+
+                screenManager.getCurrentScreen().show();
                 createjs.Ticker.requestRAF = true;
                 createjs.Ticker.setFPS(constants.FPS);
                 createjs.Ticker.addEventListener("tick", tick);
@@ -70,9 +71,14 @@
                         assetManager.toggleMute();
                     }
                     else if (e.keyCode === constants.KEY_R) {
-                        stage.removeChild(screenManager.getCurrentScreen().mainView);
-                        screenManager.getCurrentScreen().reset();
-                        stage.addChild(screenManager.getCurrentScreen().mainView)
+                        screenManager.getCurrentScreen().hide(function() {
+                            stage.removeChild(screenManager.getCurrentScreen().mainView);
+                            screenManager.getCurrentScreen().reset();
+                            stage.addChild(screenManager.getCurrentScreen().mainView);
+                            screenManager.getCurrentScreen().show();
+                        });
+
+                        
                     }
                     
                 }
