@@ -26,8 +26,13 @@
                     if (progress >= 1) {
                         stage.removeChild(progressLabel);
                     }
-                });
+                });                
                 assetManager.loadCompleteEvent.add(initializeGraphics);
+                
+
+                //temp
+                assetManager.toggleMute();
+
             },
             initializeGraphics = function () {
                 screenManager.init();
@@ -68,9 +73,6 @@
                         stage.removeChild(screenManager.getCurrentScreen().mainView);
                         screenManager.getCurrentScreen().reset();
                         stage.addChild(screenManager.getCurrentScreen().mainView)
-                    }
-                    else {
-                        console.log(e.keyCode);
                     }
                     
                 }

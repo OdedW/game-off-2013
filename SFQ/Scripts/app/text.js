@@ -34,6 +34,16 @@
                 "You're invading my personal space!",
                 'Step back buddy!'
             ],
+            cutInLineTexts = [
+                'Line cutter!',
+                'Not fair mate!',
+                'Back of the line!'
+            ],
+            notQuiteCutInLineTexts = [
+                "I'll let this one slide",
+                'Sneaky bastard',
+                "Think you're clever"
+            ],
 
 
         getRandomText = function (arr) {
@@ -43,7 +53,9 @@
             getCashierName: getCashierName,
             mistakeTexts: mistakeTexts,
             getRandomText: getRandomText,
-            bumpTexts: bumpTexts
+            bumpTexts: bumpTexts,
+            cutInLineTexts: cutInLineTexts,
+            notQuiteCutInLineTexts: notQuiteCutInLineTexts
         };
     });
 

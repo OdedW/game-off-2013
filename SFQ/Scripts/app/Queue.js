@@ -35,15 +35,20 @@
                 this.numOfCreatures = Math.round(Math.random() * (maxCreatures - minCreatures) + minCreatures);
                 for (var i = 0; i < this.numOfCreatures; i++) {
                     var creature = new NpcEntity(row, col + this.maxCreatures - i);
+                    creature.placeInLine = i;
                     this.npcsInQueue.push(creature);
                     this.allNpcs.push(creature);
                     this.setNpcToAdvanceInQueue(creature);
-                    
                 }
 
                 //callbacks
                 this.viewAdded = $.Callbacks();
                 this.viewRemoved = $.Callbacks();
+                
+                //handle player move
+                this.player.moved.add(function() {
+                    that.handlePlayerMove.apply(that); //fire in context
+                });
             },
             getViews: function () {
                 var views = [];
@@ -81,7 +86,7 @@
                     if (this.timeSinceLastNpcAddCheck > constants.TIME_TO_MAYBE_ADD_NPC_TO_QUEUE) {
                         this.timeSinceLastNpcAddCheck = 0;
                         if (Math.random() > constants.CHANCE_OF_NEW_NPC) {
-                          //  this.addNewNpc();
+                            this.addNewNpc();
                         }
                     }
                 }
@@ -101,21 +106,21 @@
                 } else  if (this.npcsInQueue.indexOf(creature) >= 0) { //npc
                     //chance for mistake
                     if (!creature.mistakeWasMade && Math.random() * 10 > this.cashier.accuracy) {
-                        this.startMistakeDialog();
+                        this.startMistakeDialog(creature);
                     }
                     else {
                         creature.hideItemCount();
-                        this.leave();
+                        this.leave(creature);
                     }
                 }
             },
-            startMistakeDialog: function(){
+            startMistakeDialog: function (creature) {
                 this.mistakeDialogStarted = true;
                 var that = this;
-                this.npcsInQueue[0].mistakeWasMade = true;
-                this.npcsInQueue[0].say(text.getRandomText(text.mistakeTexts), function () {
+                creature.mistakeWasMade = true;
+                creature.say(text.getRandomText(text.mistakeTexts), function () {
                     that.cashier.say("Sorry, I'll have to do it again", function () {
-                        that.npcsInQueue[0].itemCount = that.npcsInQueue[0].initialItemCount;
+                       creature.itemCount = creature.initialItemCount;
                         that.mistakeDialogStarted = false;
                     }, 2000);
                 }, 2000);
@@ -138,35 +143,71 @@
                 npc.shouldMove = true;
 
             },
-            leave: function () {
+            leave: function (creature) {
                 //init the npc to leave
-                var npcLeaving = this.npcsInQueue[0];
+                creature.placeInLine = -1;
+                this.moveUpInLine();
                 this.npcsInQueue.splice(0, 1);
-                npcLeaving.shouldMove = true;
+                creature.shouldMove = true;
 
                 //set the destination
                 var destRow = this.exitRow;
                 var destCol = constants.NUM_COLUMNS;
-                npcLeaving.movementDestination = { row: destRow, col: destCol };
+                creature.movementDestination = { row: destRow, col: destCol };
 
                 //remove npc once it left
                 var that = this;
-                npcLeaving.finishedMoving.add(function () {
+                creature.finishedMoving.add(function () {
                     that.viewRemoved.fire(this.view);
-                    tileManager.collisionMap[npcLeaving.currentRow][npcLeaving.currentColumn] = false;
-                    that.allNpcs.splice(that.allNpcs.indexOf(npcLeaving), 1);
-                    npcLeaving = null;
+                    tileManager.collisionMap[creature.currentRow][creature.currentColumn] = false;
+                    that.allNpcs.splice(that.allNpcs.indexOf(creature), 1);
+                    creature = null;
                 });
                                 
+            },
+            moveUpInLine: function() {
+                for (var i = 0; i < this.npcsInQueue.length; i++) {
+                    this.npcsInQueue[i].placeInLine--;
+                }  
             },
             addNewNpc: function () {
                 if (tileManager.collisionMap[this.entryRow][0]) //someone is already occupying that square
                     return;
                 var creature = new NpcEntity(this.entryRow, 0);
+                creature.placeInLine = this.npcsInQueue.length;
                 this.npcsInQueue.push(creature);
                 this.allNpcs.push(creature);
                 this.setNpcToAdvanceInQueue(creature);
                 this.viewAdded.fire(creature.view);
+            },
+            handlePlayerMove: function () {
+                
+                if (this.player.currentRow == this.row) {
+                    if (this.npcsInQueue.length > 1 &&
+                       this.npcsInQueue[this.npcsInQueue.length-1].currentColumn < this.player.currentColumn) { //last
+                        if (!this.playerInQueue) { //cut in line
+                            var cutee = null;
+                            for (var i = 0; i < this.npcsInQueue.length; i++) {//get the closest cutee
+                                if (this.npcsInQueue[i].currentColumn < this.player.currentColumn) { //yell 
+                                    if (!cutee)
+                                        cutee = this.npcsInQueue[i];
+                                    else {
+                                        cutee = this.player.currentColumn - this.npcsInQueue[i].currentColumn <
+                                            this.player.currentColumn - cutee.currentColumn ? this.npcsInQueue[i] : cutee;
+                                    }
+                                }
+                            }
+                            if (cutee) {
+                                if (cutee.placeInLine == this.npcsInQueue.length -1 && //last in line
+                                    this.player.currentColumn - cutee.currentColumn > 1) //didn't reach end of the line yet
+                                    cutee.say(text.getRandomText(text.notQuiteCutInLineTexts));
+                                else
+                                    cutee.say(text.getRandomText(text.cutInLineTexts));
+                            }
+                        }
+                    }
+                }
+                this.playerInQueue = this.player.currentRow == this.row;
             }
         });
     });

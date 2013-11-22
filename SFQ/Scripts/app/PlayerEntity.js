@@ -5,6 +5,7 @@
             init: function (row, col) {
                 this._super(row, col, 0);
                 this.winState = $.Callbacks();
+                this.moved = $.Callbacks();
             },
             createView: function(x, y) {
                 this._super(x, y);
@@ -21,6 +22,7 @@
                     this.setPosition(newRow, newCol);
                     assetManager.playSound('walk');
                     this.setItemCount(); //reset items scanned
+                    this.moved.fire();
                 } else if (tileManager.collisionMap[newRow][newCol].isNpc) {
                     var npc = tileManager.collisionMap[newRow][newCol];
                     var that = this;

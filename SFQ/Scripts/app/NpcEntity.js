@@ -20,7 +20,6 @@
                 var orgPos = utils.getAbsolutePositionByGridPosition(this.currentRow, this.currentColumn);
                 this.randomShake(orgPos, this, 6);
                 this.say(text.getRandomText(text.bumpTexts));
-
             },
             randomShake: function (startPos, that,maxDelta) {
                 var deltaX = Math.round(Math.random() * maxDelta) - 1;
