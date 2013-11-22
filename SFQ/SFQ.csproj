@@ -138,6 +138,7 @@
     </Content>
     <Content Include="Content\Sounds\beep.mp3" />
     <Content Include="Content\Sounds\bossa.mp3" />
+    <Content Include="Content\Sounds\bump.mp3" />
     <Content Include="Content\Sounds\supermarket.mp3" />
     <Content Include="Content\Sounds\walk.mp3" />
     <Content Include="favicon.ico" />
@@ -169,6 +170,7 @@
     <Content Include="Content\Sounds\supermarket.ogg" />
     <Content Include="Content\Sounds\bossa.ogg" />
     <Content Include="Content\Sounds\walk.ogg" />
+    <Content Include="Content\Sounds\bump.ogg" />
     <None Include="Scripts\lib\jquery-1.10.2.intellisense.js" />
     <Content Include="Scripts\lib\jquery-1.10.2.js" />
     <Content Include="Scripts\lib\jquery-1.10.2.min.js" />

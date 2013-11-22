@@ -19,6 +19,7 @@
                 this._super(pos.x, pos.y);
                 this.finishedMoving = $.Callbacks();
                 tileManager.collisionMap[this.currentRow][this.currentColumn] = this;
+                
             },
             setItemCount:function() {
                 this.initialItemCount = this.itemCount = 0;
@@ -43,12 +44,11 @@
                 //speech bubble
                 this.speechBubble = new createjs.Container();
                 this.speechBubbleContainer = new createjs.Shape();
-                this.speechBubbleContainer.graphics.beginFill("gray").drawRoundRect(0, 0, constants.TILE_SIZE * 1.5, constants.TILE_SIZE * 1, 5)
-                .beginFill("black").drawRoundRect(2, 2, constants.TILE_SIZE * 1.5 - 4, constants.TILE_SIZE * 1 - 4, 5);
+                this.speechBubbleContainer.graphics.beginFill("gray").drawRoundRect(0, 0, constants.TILE_SIZE * 1.5, constants.TILE_SIZE * 1, 5).beginFill("black").drawRoundRect(2, 2, constants.TILE_SIZE * 1.5 - 4, constants.TILE_SIZE * 1 - 4, 5);
                 this.speechBubble.alpha = 0;
                 this.speechBubble.x = -constants.TILE_SIZE/2;
                 this.speechBubble.y = -constants.TILE_SIZE;
-                this.speechBubbleText = new createjs.Text(this.name, "9px " + constants.FONT + "", "white");
+                this.speechBubbleText = new createjs.Text(this.name, "10px " + constants.FONT + "", "white");
                 this.speechBubbleText.lineWidth = constants.TILE_SIZE * 1.5 - 10;
                 this.speechBubbleText.x = 6;
                 this.speechBubbleText.y = 2;
@@ -119,11 +119,22 @@
                 this.view.y = pos.y;
             },
             say: function (text, callback, timeout) {
+                if (tileManager.collisionMap[this.currentRow - 1][this.currentColumn]) { //someone is one square up
+                    this.speechBubble.y = constants.TILE_SIZE;
+                } else {
+                    this.speechBubble.y = -constants.TILE_SIZE;
+                }
+                
                 timeout = timeout || 3000;
                 this.speechBubbleText.text = text;
                 var that = this;
+                
                 createjs.Tween.get(this.speechBubble).to({ alpha: 1 }, 100, createjs.Ease.quadIn);
-                setTimeout(function () {
+                if (this.speechTimeout) {
+                    clearInterval(this.speechTimeout);
+                }
+
+                this.speechTimeout = setTimeout(function () {
                     createjs.Tween.get(that.speechBubble).to({ alpha: 0 }, 100, createjs.Ease.quadIn);
                     if (callback)
                         setTimeout(function () {

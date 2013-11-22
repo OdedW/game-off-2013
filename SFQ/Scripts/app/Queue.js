@@ -3,6 +3,7 @@
     function (createjs, NpcEntity, constants, utils, assetManager, CashierEntity, tileManager,text) {
         return Class.extend({
             init: function (player, row, col, maxCreatures, minCreatures, entryRow, exitRow) {
+                var that = this;
                 this.row = row;
                 this.col = col;
                 this.player = player;
@@ -37,6 +38,7 @@
                     this.npcsInQueue.push(creature);
                     this.allNpcs.push(creature);
                     this.setNpcToAdvanceInQueue(creature);
+                    
                 }
 
                 //callbacks

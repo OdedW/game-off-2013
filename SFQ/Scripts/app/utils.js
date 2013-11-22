@@ -91,11 +91,17 @@
                     x: col * constants.TILE_SIZE,
                     y: row * constants.TILE_SIZE
                 };
+            },
+            resetPosition = function(creature) {
+                var pos = getAbsolutePositionByGridPosition(creature.currentRow, creature.currentColumn);
+                creature.view.x = pos.x;
+                creature.view.y = pos.y;
             };
         return {
             getBounds: getBounds,
             calculateIntersection: calculateIntersection,
             calculateCollision: calculateCollision,
-            getAbsolutePositionByGridPosition: getAbsolutePositionByGridPosition
+            getAbsolutePositionByGridPosition: getAbsolutePositionByGridPosition,
+            resetPosition: resetPosition
         };
     });
