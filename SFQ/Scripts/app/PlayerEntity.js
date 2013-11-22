@@ -14,8 +14,8 @@
 
             },
             move: function (x, y) {
-                var newRow = this.currentRow + y,
-                    newCol = this.currentColumn + x;
+                var newRow = this.row + y,
+                    newCol = this.col + x;
                 
                 if (!tileManager.collisionMap[newRow][newCol] && //check for collision
                     newRow >= 0 && newRow < constants.NUM_ROWS && //check bounds
@@ -27,7 +27,7 @@
                 } else if (tileManager.collisionMap[newRow][newCol].isNpc) {
                     var npc = tileManager.collisionMap[newRow][newCol];
                     var that = this;
-                    var orgPos = utils.getAbsolutePositionByGridPosition(this.currentRow, this.currentColumn);
+                    var orgPos = utils.getAbsolutePositionByGridPosition(this.row, this.col);
                     var destX = Math.sign(npc.view.x - this.view.x) * 10 + this.view.x,
                         destY = Math.sign(npc.view.y - this.view.y) * 10 + this.view.y;
                     createjs.Tween.get(that.view).to({ x: destX, y: destY }, 50, createjs.Ease.linear).call(function () {

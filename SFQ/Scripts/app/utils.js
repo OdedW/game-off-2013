@@ -93,7 +93,7 @@
                 };
             },
             resetPosition = function(creature) {
-                var pos = getAbsolutePositionByGridPosition(creature.currentRow, creature.currentColumn);
+                var pos = getAbsolutePositionByGridPosition(creature.row, creature.col);
                 creature.view.x = pos.x;
                 creature.view.y = pos.y;
             };

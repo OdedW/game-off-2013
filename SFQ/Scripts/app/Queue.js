@@ -22,7 +22,7 @@
                 
                 //create cashier and table
                 this.cashier = new CashierEntity(row - 1, col + this.maxCreatures + 1);
-                tileManager.collisionMap[this.cashier.currentRow][this.cashier.currentColumn] = this.cashier;
+                tileManager.collisionMap[this.cashier.row][this.cashier.col] = this.cashier;
                 this.table = new createjs.Bitmap(assetManager.images.table);
                 this.tablePosition = { row: row, col: col + this.maxCreatures + 1 };
                 this.firstInLinePosition = { row: row, col: col + this.maxCreatures };
@@ -178,7 +178,7 @@
                 var that = this;
                 creature.finishedMoving.add(function () {
                     that.viewRemoved.fire(this.view);
-                    tileManager.collisionMap[creature.currentRow][creature.currentColumn] = false;
+                    tileManager.collisionMap[creature.row][creature.col] = false;
                     that.allNpcs.splice(that.allNpcs.indexOf(creature), 1);
                     creature = null;
                 });
@@ -196,24 +196,24 @@
                 this.viewAdded.fire(npc.view);
             },           
             handlePlayerMove: function () {
-                if (this.player.currentRow == this.row) {
+                if (this.player.row == this.row) {
                     if (this.npcsInQueue.length > 1 &&
-                        this.npcsInQueue[this.npcsInQueue.length - 1].currentColumn < this.player.currentColumn) { //last
+                        this.npcsInQueue[this.npcsInQueue.length - 1].col < this.player.col) { //last
                         if (!this.playerInQueue) { //cut in line
                             var cutee = null;
                             for (var i = 0; i < this.npcsInQueue.length; i++) { //get the closest cutee
-                                if (this.npcsInQueue[i].currentColumn < this.player.currentColumn) { //yell 
+                                if (this.npcsInQueue[i].col < this.player.col) { //yell 
                                     if (!cutee)
                                         cutee = this.npcsInQueue[i];
                                     else {
-                                        cutee = this.player.currentColumn - this.npcsInQueue[i].currentColumn <
-                                            this.player.currentColumn - cutee.currentColumn ? this.npcsInQueue[i] : cutee;
+                                        cutee = this.player.col - this.npcsInQueue[i].col <
+                                            this.player.col - cutee.col ? this.npcsInQueue[i] : cutee;
                                     }
                                 }
                             }
                             if (cutee) {
                                 if (cutee.placeInLine == this.npcsInQueue.length - 1 && //last in line
-                                    this.player.currentColumn - cutee.currentColumn > 1) //didn't reach end of the line yet, not quite cutting in line
+                                    this.player.col - cutee.col > 1) //didn't reach end of the line yet, not quite cutting in line
                                     cutee.say(text.getRandomText(text.notQuiteCutInLineTexts));
                                 else {
                                     cutee.say(text.getRandomText(text.cutInLineTexts));
@@ -225,13 +225,13 @@
                 } else {
                     this.playerCutInLine = false;
                 }
-                this.playerInQueue = this.player.currentRow == this.row;
+                this.playerInQueue = this.player.row == this.row;
             },
             npcIsBlockedByPlayer:function(npc) {
                 if (this.timeSinceLastCalledToMoveUp == -1 && //enough time passed
                     !this.playerCutInLine &&
-                    this.player.currentColumn < this.tablePosition.col-1 && //not first in line
-                    !tileManager.collisionMap[this.row][this.player.currentColumn + 1]) { //has place to advance
+                    this.player.col < this.tablePosition.col-1 && //not first in line
+                    !tileManager.collisionMap[this.row][this.player.col + 1]) { //has place to advance
                     npc.say(text.getRandomText(text.playerHoldingUpLine));
                     this.timeSinceLastCalledToMoveUp = 0;
                 }

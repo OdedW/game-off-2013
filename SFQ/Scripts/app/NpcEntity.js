@@ -23,7 +23,7 @@
                 this.initialItemCount = this.itemCount = Math.floor(Math.random() * 3 + 3);
             },
             bump: function () {
-                var orgPos = utils.getAbsolutePositionByGridPosition(this.currentRow, this.currentColumn);
+                var orgPos = utils.getAbsolutePositionByGridPosition(this.row, this.col);
                 this.randomShake(orgPos, this, 6);
                 this.say(text.getRandomText(text.bumpTexts));
             },
@@ -45,12 +45,12 @@
                     this.checkForDestinationReached(); //destination was point of beginning
                     this.timeSinceLastMove += evt.delta;
                     if (this.timeSinceLastMove >= this.movementSpeed) {
-                        var nextCol = this.currentColumn + Math.sign(this.movementDestination.col - this.currentColumn);
-                        var nextRow = this.currentRow + Math.sign(this.movementDestination.row - this.currentRow);
+                        var nextCol = this.col + Math.sign(this.movementDestination.col - this.col);
+                        var nextRow = this.row + Math.sign(this.movementDestination.row - this.row);
                         //check for collision
                         if (tileManager.collisionMap[nextRow][nextCol]) //occupied
                         {
-                            if (nextRow == this.currentRow &&
+                            if (nextRow == this.row &&
                                 tileManager.collisionMap[nextRow][nextCol].isPlayer) {
                                 console.log('pre');
                                 this.playerIsBlockingMove.fire(this);
@@ -58,7 +58,7 @@
                                 return; //wait in place
 
                             } else {
-                                nextRow = this.currentRow; //try to move horizontally
+                                nextRow = this.row; //try to move horizontally
                                 if (tileManager.collisionMap[nextRow][nextCol]) //occupied
                                 {
                                     this.timeSinceLastMove = 0;
@@ -73,8 +73,8 @@
                 }
             },
             checkForDestinationReached: function () {
-                if (this.currentColumn === this.movementDestination.col &&
-                            this.currentRow === this.movementDestination.row) {
+                if (this.col === this.movementDestination.col &&
+                            this.row === this.movementDestination.row) {
                     this.shouldMove = false;
                     this.finishedMoving.fire();
                 }

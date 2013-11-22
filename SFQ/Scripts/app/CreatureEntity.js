@@ -10,11 +10,11 @@
                 creatureIndex = creatureIndex === 0 ? 1 : creatureIndex;
                 this.creatureIndex = index === undefined ? creatureIndex : index;
                 var pos = utils.getAbsolutePositionByGridPosition(row, col);
-                this.currentRow = row;
-                this.currentColumn = col;
+                this.row = row;
+                this.col = col;
 
                 this._super(pos.x, pos.y);
-                tileManager.collisionMap[this.currentRow][this.currentColumn] = this;
+                tileManager.collisionMap[this.row][this.col] = this;
             },
             setItemCount:function() {
                 this.initialItemCount = this.itemCount = 0;
@@ -75,18 +75,18 @@
             },
             setPosition: function (row, col) {
                 //set position in collisionMap
-                tileManager.collisionMap[this.currentRow][this.currentColumn] = false;
+                tileManager.collisionMap[this.row][this.col] = false;
                 tileManager.collisionMap[row][col] = this;
 
-                this.currentRow = row;
-                this.currentColumn = col;
+                this.row = row;
+                this.col = col;
 
                 var pos = utils.getAbsolutePositionByGridPosition(row, col);
                 this.view.x = pos.x;
                 this.view.y = pos.y;
             },
             say: function (text, callback, timeout) {
-                if (tileManager.collisionMap[this.currentRow - 1][this.currentColumn]) { //someone is one square up
+                if (tileManager.collisionMap[this.row - 1][this.col]) { //someone is one square up
                     this.speechBubble.y = constants.TILE_SIZE;
                 } else {
                     this.speechBubble.y = -constants.TILE_SIZE;
