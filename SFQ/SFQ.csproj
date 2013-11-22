@@ -127,6 +127,7 @@
     <Content Include="Content\Images\bg.png" />
     <Content Include="Content\Images\cashier.png" />
     <Content Include="Content\Images\cash_register.png" />
+    <Content Include="Content\Images\heart.png" />
     <Content Include="Content\Images\oryx_creatures.png" />
     <Content Include="Content\Images\oryx_items.png" />
     <Content Include="Content\Images\table.png" />

@@ -77,8 +77,9 @@
                             stage.addChild(screenManager.getCurrentScreen().mainView);
                             screenManager.getCurrentScreen().show();
                         });
-
-                        
+                    }
+                    else if (e.keyCode == constants.KEY_SPACE) {
+                        screenManager.getCurrentScreen().player.die();
                     }
                     
                 }

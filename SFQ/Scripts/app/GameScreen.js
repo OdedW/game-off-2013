@@ -2,19 +2,21 @@
     ['createjs', 'Screen', 'PlayerEntity', 'Queue', 'assetManager', 'constants', 'tileManager'],
     function (createjs, Screen, PlayerEntity, Queue, assetManager, constants, tileManager) {
         return Screen.extend({
-            init: function() {
+
+            init: function () {
+                var that = this;
+
                 this._super();
                 this.gameWorld = new createjs.Container();
                 this.mainView.addChild(this.gameWorld);
 
                 //win text
-                this.winText = new createjs.Text('Checked out!', "36px Minecraftia", "white");
-                this.winText.alpha = 0;
-                var b = this.winText.getBounds();
-                this.winText.x = 200;
-                this.winText.y = 230;
-                this.mainView.addChild(this.winText);
-
+                this.endStateText = new createjs.Text('Checked out!', "36px Minecraftia", "white");
+                this.endStateText.alpha = 0;               
+                this.endStateText.textAlign = 'center';
+                this.endStateText.textBaseline = 'middle';
+                this.mainView.addChild(this.endStateText);
+              
                 //gameWorld
                 var bg = new createjs.Bitmap(assetManager.images.bg);
                 this.gameWorld.addChild(bg);
@@ -25,11 +27,39 @@
                 this.createQueue(8, 2, 8, 5, 9, 6);
                 this.gameWorld.addChild(this.player.view);
                 this.inWinState = false;
-                var that = this;
-                this.player.winState.add( function() {
+                this.player.winState.add(function () {
+                    that.endStateText.text = 'Checked out!';
+                    var b = that.endStateText.getBounds();
+                    that.endStateText.x = constants.WORLD_WIDTH / 2;
+                    that.endStateText.y = constants.WORLD_HEIGHT / 2;
                     createjs.Tween.get(that.gameWorld).to({ alpha: 0.2 }, 500, createjs.Ease.quadIn);
-                    createjs.Tween.get(that.winText).to({ alpha: 1 }, 500, createjs.Ease.quadIn);
+                    createjs.Tween.get(that.endStateText).to({ alpha: 1 }, 500, createjs.Ease.quadIn);
                     that.inWinState = true;
+                });
+                this.player.loseState.add(function (text) {
+                    that.endStateText.text = text;
+                    var b = that.endStateText.getBounds();
+                    that.endStateText.x = constants.WORLD_WIDTH / 2;
+                    that.endStateText.y = constants.WORLD_HEIGHT / 2;
+                    createjs.Tween.get(that.gameWorld).to({ alpha: 0.2 }, 200, createjs.Ease.quadIn);
+                    createjs.Tween.get(that.endStateText).to({ alpha: 1 }, 200, createjs.Ease.quadIn);
+                    that.inWinState = true;
+                });
+                
+                //hitpoints
+                var x = 10;
+                this.hitPointsIcons = [];
+                for (var i = 0; i < this.player.hitPoints; i++) {
+                    var heart = new createjs.Bitmap(assetManager.images.heart);
+                    heart.x = x;
+                    heart.y = 6;
+                    this.hitPointsIcons.push(heart);
+                    this.gameWorld.addChild(heart);
+                    x += 36;
+                }
+                this.player.tookHit.add(function() {
+                    that.gameWorld.removeChild(that.hitPointsIcons[that.hitPointsIcons.length - 1]);
+                    that.hitPointsIcons.splice(that.hitPointsIcons.length - 1, 1);
                 });
             },
             handleKeyDown: function (e) {

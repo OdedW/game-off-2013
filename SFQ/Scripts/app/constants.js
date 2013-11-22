@@ -11,6 +11,8 @@
             MOVE_SPEED: 10,
             CHANCE_OF_NEW_NPC: 0.5,
             MAX_CREATURES_IN_QUEUE: 7,
+            CHANCE_OF_BEING_AGRESSIVE: 1,
+            NUM_OF_WARNINGS_BEFORE_ENGAGING: 1,
 
             //asset constants
             CREATURES_IN_ROW: 18,
@@ -24,6 +26,7 @@
             MAX_MOVEMENT_SPEED: 900, //ms per move
             TIME_TO_MAYBE_ADD_NPC_TO_QUEUE: 4000, //ms
             TIME_BETWEEN_CALLS_TO_MOVE_UP: 5000,
+            TIME_BETWEEN_WARNINGS: 2200,
             
             //keys
             KEY_A: 65,

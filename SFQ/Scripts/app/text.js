@@ -50,6 +50,11 @@
                 "We're gonna be here all day",
                 'Take your time buddy'
             ],
+            warnAfterLineCutting = [
+                "I'm warning you!",
+                "Last warning!",
+                'Step out now friend!'
+            ],
 
 
         getRandomText = function (arr) {
@@ -62,7 +67,8 @@
             bumpTexts: bumpTexts,
             cutInLineTexts: cutInLineTexts,
             notQuiteCutInLineTexts: notQuiteCutInLineTexts,
-            playerHoldingUpLine: playerHoldingUpLine
+            playerHoldingUpLine: playerHoldingUpLine,
+            warnAfterLineCutting: warnAfterLineCutting
         };
     });
 

@@ -1,8 +1,8 @@
 ﻿define('Queue',
-    ['createjs', 'NpcEntity', 'constants', 'utils', 'assetManager', 'CashierEntity', 'tileManager','text'],
-    function (createjs, NpcEntity, constants, utils, assetManager, CashierEntity, tileManager,text) {
+    ['createjs', 'NpcEntity', 'constants', 'utils', 'assetManager', 'CashierEntity', 'tileManager', 'text'],
+    function (createjs, NpcEntity, constants, utils, assetManager, CashierEntity, tileManager, text) {
         return Class.extend({
-            init: function (player, row, col, maxCreatures, minCreatures, entryRow, exitRow) {
+            init: function(player, row, col, maxCreatures, minCreatures, entryRow, exitRow) {
                 var that = this;
                 this.row = row;
                 this.col = col;
@@ -12,14 +12,15 @@
                 this.maxCreatures = maxCreatures;
                 this.minCreatures = minCreatures;
                 this.npcsInQueue = [];
-                this.allNpcs = [];                
+                this.allNpcs = [];
                 this.mistakeDialogStarted = false;
-                
+
                 //times
                 this.timeSinceLastScan = 0;
                 this.timeSinceLastNpcAddCheck = 0;
                 this.timeSinceLastCalledToMoveUp = -1;
-                
+                this.timeSinceLastWarnedAboutLineCutting = -1;
+
                 //create cashier and table
                 this.cashier = new CashierEntity(row - 1, col + this.maxCreatures + 1);
                 tileManager.collisionMap[this.cashier.row][this.cashier.col] = this.cashier;
@@ -32,7 +33,7 @@
                 this.table.scaleX = 1.2;
                 this.cashRegister = new createjs.Bitmap(assetManager.images.cashRegister);
                 this.cashRegister.x = pos.x + 2;
-                this.cashRegister.y = pos.y ;
+                this.cashRegister.y = pos.y;
                 this.currentItem = null;
 
                 //create npcs in queue
@@ -45,21 +46,25 @@
                 //callbacks
                 this.viewAdded = $.Callbacks();
                 this.viewRemoved = $.Callbacks();
-                
+
                 //handle player move
                 this.player.moved.add(function() {
                     that.handlePlayerMove.apply(that); //fire in context
                 });
             },
-            createNewNpc: function (row, col) {
+            createNewNpc: function(row, col) {
                 var that = this;
                 var npc = new NpcEntity(row, col);
                 npc.placeInLine = this.npcsInQueue.length;
                 this.npcsInQueue.push(npc);
                 this.allNpcs.push(npc);
                 this.setNpcToAdvanceInQueue(npc);
-                npc.playerIsBlockingMove.add(function (sender) {
+                npc.playerIsBlockingMove.add(function(sender) {
                     that.npcIsBlockedByPlayer.apply(that, [sender]);
+                });
+                npc.died.add(function() {
+                    that.npcsInQueue.splice(that.npcsInQueue.indexOf(npc, 1));
+                    that.allNpcs.splice(that.allNpcs.indexOf(npc), 1);
                 });
                 return npc;
             },
@@ -78,16 +83,25 @@
                 return views;
 
             },
-            tick: function(evt) {
-                //advance timeSinceLastCalledToMoveUp
+            tick: function (evt) {
+                //advance times
                 if (this.timeSinceLastCalledToMoveUp != -1) {
                     this.timeSinceLastCalledToMoveUp += evt.delta;
                     if (this.timeSinceLastCalledToMoveUp > constants.TIME_BETWEEN_CALLS_TO_MOVE_UP)
                         this.timeSinceLastCalledToMoveUp = -1;
                 }
+                if (this.timeSinceLastWarnedAboutLineCutting != -1) {
+                    this.timeSinceLastWarnedAboutLineCutting += evt.delta;
+                    if (this.timeSinceLastWarnedAboutLineCutting > constants.TIME_BETWEEN_WARNINGS)
+                        this.timeSinceLastWarnedAboutLineCutting = -1;
+                }
+
+                //tick rest
                 for (var i = 0; i < this.allNpcs.length; i++) {
                     this.allNpcs[i].tick(evt);
                 }
+
+                //scan
                 var creature = tileManager.collisionMap[this.firstInLinePosition.row][this.firstInLinePosition.col];
                 if (creature) {
                     if (!this.mistakeDialogStarted) {
@@ -98,7 +112,7 @@
                         }
                     }
                 }
-                
+
                 //check if need to add new npc
                 if (this.npcsInQueue.length < constants.MAX_CREATURES_IN_QUEUE) {
                     this.timeSinceLastNpcAddCheck += evt.delta;
@@ -122,7 +136,7 @@
                     this.currentItem.y = pos.y + 9;
                     this.viewAdded.fire(this.currentItem);
                     //assetManager.playSound('beep', 0.1);
-                } else  if (this.npcsInQueue.indexOf(creature) >= 0) { //npc
+                } else if (creature.isNpc) { //npc
                     //chance for mistake
                     if (!creature.mistakeWasMade && Math.random() * 10 > this.cashier.accuracy) {
                         this.startMistakeDialog(creature);
@@ -137,9 +151,9 @@
                 this.mistakeDialogStarted = true;
                 var that = this;
                 creature.mistakeWasMade = true;
-                creature.say(text.getRandomText(text.mistakeTexts), function () {
-                    that.cashier.say("Sorry, I'll have to do it again", function () {
-                       creature.itemCount = creature.initialItemCount;
+                creature.say(text.getRandomText(text.mistakeTexts), 3000, function () {
+                    that.cashier.say("Sorry, I'll have to do it again", 3000, function () {
+                        creature.itemCount = creature.initialItemCount;
                         that.mistakeDialogStarted = false;
                     }, 2000);
                 }, 2000);
@@ -182,19 +196,19 @@
                     that.allNpcs.splice(that.allNpcs.indexOf(creature), 1);
                     creature = null;
                 });
-                                
+
             },
-            moveUpInLine: function() {
+            moveUpInLine: function () {
                 for (var i = 0; i < this.npcsInQueue.length; i++) {
                     this.npcsInQueue[i].placeInLine--;
-                }  
+                }
             },
             addNewNpc: function () {
                 if (tileManager.collisionMap[this.entryRow][0]) //someone is already occupying that square
                     return;
                 var npc = this.createNewNpc(this.entryRow, 0);
                 this.viewAdded.fire(npc.view);
-            },           
+            },
             handlePlayerMove: function () {
                 if (this.player.row == this.row) {
                     if (this.npcsInQueue.length > 1 &&
@@ -216,8 +230,9 @@
                                     this.player.col - cutee.col > 1) //didn't reach end of the line yet, not quite cutting in line
                                     cutee.say(text.getRandomText(text.notQuiteCutInLineTexts));
                                 else {
-                                    cutee.say(text.getRandomText(text.cutInLineTexts));
+                                    cutee.say(text.getRandomText(text.cutInLineTexts), 1500);
                                     this.playerCutInLine = true;
+                                    this.timeSinceLastWarnedAboutLineCutting = 0;
                                 }
                             }
                         }
@@ -227,13 +242,28 @@
                 }
                 this.playerInQueue = this.player.row == this.row;
             },
-            npcIsBlockedByPlayer:function(npc) {
-                if (this.timeSinceLastCalledToMoveUp == -1 && //enough time passed
-                    !this.playerCutInLine &&
-                    this.player.col < this.tablePosition.col-1 && //not first in line
-                    !tileManager.collisionMap[this.row][this.player.col + 1]) { //has place to advance
-                    npc.say(text.getRandomText(text.playerHoldingUpLine));
+            npcIsBlockedByPlayer: function (npc) {
+                if (this.timeSinceLastCalledToMoveUp == -1 ){ //enough time passed                   
+                    if (!this.playerCutInLine &&
+                        !tileManager.collisionMap[this.row][this.player.col + 1] && //has place to advance
+                        this.player.col < this.tablePosition.col - 1) { //not first in line
+                        npc.say(text.getRandomText(text.playerHoldingUpLine));
+                    }
                     this.timeSinceLastCalledToMoveUp = 0;
+                }
+                
+                if (this.timeSinceLastWarnedAboutLineCutting == -1) {
+                    if (this.playerCutInLine) {
+                        if (npc.numOfWarningsAfterLineCutting < constants.NUM_OF_WARNINGS_BEFORE_ENGAGING) {
+                            npc.say(text.getRandomText(text.warnAfterLineCutting), 1500);
+                            npc.numOfWarningsAfterLineCutting++;
+                        } else {
+                            if (npc.isAggresive) {
+                                npc.kill(this.player);
+                            }
+                        }
+                    }
+                    this.timeSinceLastWarnedAboutLineCutting = 0;
                 }
             }
         });

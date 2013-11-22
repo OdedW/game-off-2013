@@ -12,9 +12,19 @@
                 var pos = utils.getAbsolutePositionByGridPosition(row, col);
                 this.row = row;
                 this.col = col;
+                this.hitPoints = 3;
 
                 this._super(pos.x, pos.y);
                 tileManager.collisionMap[this.row][this.col] = this;
+                
+                //callbacks
+                this.moved = $.Callbacks();
+                this.tookHit = $.Callbacks();
+                this.died = $.Callbacks();
+            },
+            hit: function () {
+                this.hitPoints--;
+                this.tookHit.fire();
             },
             setItemCount:function() {
                 this.initialItemCount = this.itemCount = 0;
@@ -52,8 +62,10 @@
                 this.view.addChild(this.speechBubble);
                 
                 this.avatar = new createjs.Sprite(this.spriteSheet, 'idle');
+                this.avatar.regX = this.avatar.regY = this.size.w / 2;
+                this.avatar.x = this.avatar.y = this.size.w / 2;
                 this.view.addChild(this.avatar);
-                this.view.x = x;
+                this.view.x = x ;
                 this.view.y = y;
                 
                 this.itemCountLabel = new createjs.Container();
@@ -85,7 +97,7 @@
                 this.view.x = pos.x;
                 this.view.y = pos.y;
             },
-            say: function (text, callback, timeout) {
+            say: function (text, timeout, callback) {
                 if (tileManager.collisionMap[this.row - 1][this.col]) { //someone is one square up
                     this.speechBubble.y = constants.TILE_SIZE;
                 } else {
@@ -129,6 +141,29 @@
                     this.hideItemCount();
                 else if (this.itemCountLabel.alpha === 0)
                     this.showItemCount();
+            },
+            die: function (callback) {
+                var that = this;
+               
+                createjs.Tween.get(this.avatar).to({ rotation: 720 }, 1000, createjs.Ease.quadOut).call(function() {
+//                    that.avatar.rotation = 0;
+                });
+                createjs.Tween.get(this.avatar).to({ alpha: 0 }, 1000, createjs.Ease.quadIn).call(function () {
+//                    that.avatar.alpha = 1;
+                });
+                createjs.Tween.get(this.avatar).to({ scaleX: 0 }, 1000, createjs.Ease.quadOut).call(function () {
+//                    that.avatar.scaleX = 1;
+                });;
+                createjs.Tween.get(this.avatar).to({ scaleY: 0 }, 1000, createjs.Ease.quadOut).call(function () {
+//                    that.avatar.scaleY = 1;
+                });
+                tileManager.collisionMap[that.row][that.col] = false; //remove from board
+
+                setTimeout(function() {
+                    that.died.fire(that);
+                    if (callback)
+                        callback();
+                }, 500);
             }
         });
 });

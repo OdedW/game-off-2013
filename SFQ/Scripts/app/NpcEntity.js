@@ -1,6 +1,6 @@
 ﻿define('NpcEntity',
-    ['CreatureEntity', 'createjs', 'utils', 'text', 'tileManager', 'constants'],
-    function (CreatureEntity, createjs, utils, text, tileManager, constants) {
+    ['CreatureEntity', 'createjs', 'utils', 'text', 'tileManager', 'constants', 'assetManager'],
+    function (CreatureEntity, createjs, utils, text, tileManager, constants, assetManager) {
         return CreatureEntity.extend({
             init: function (row, col) {
                 this.mistakeWasMade = false;
@@ -11,7 +11,10 @@
                 this.shouldMove = false;
                 this.movementDestination = null;
                 this.timeSinceLastMove = 0;
-                
+                this.isAggresive = Math.random() < constants.CHANCE_OF_BEING_AGRESSIVE;
+                this.numOfWarningsAfterLineCutting = 0;
+                this.killMode = false;
+
                 //calbacks
                 this.playerIsBlockingMove = $.Callbacks();
                 this.finishedMoving = $.Callbacks();
@@ -23,9 +26,18 @@
                 this.initialItemCount = this.itemCount = Math.floor(Math.random() * 3 + 3);
             },
             bump: function () {
+                assetManager.playSound('bump');
+                this.hit();
+                if (this.hitPoints == 0) {
+                    this.die();
+                    return;
+                }
                 var orgPos = utils.getAbsolutePositionByGridPosition(this.row, this.col);
                 this.randomShake(orgPos, this, 6);
-                this.say(text.getRandomText(text.bumpTexts));
+                if (!this.killMode) {
+                    this.say(text.getRandomText(text.bumpTexts));
+                }
+                
             },
             randomShake: function (startPos, that,maxDelta) {
                 var deltaX = Math.round(Math.random() * maxDelta) - 1;
@@ -48,14 +60,26 @@
                         var nextCol = this.col + Math.sign(this.movementDestination.col - this.col);
                         var nextRow = this.row + Math.sign(this.movementDestination.row - this.row);
                         //check for collision
-                        if (tileManager.collisionMap[nextRow][nextCol]) //occupied
+                        var creature = tileManager.collisionMap[nextRow][nextCol];
+                        if (creature) //occupied
                         {
-                            if (nextRow == this.row &&
-                                tileManager.collisionMap[nextRow][nextCol].isPlayer) {
-                                console.log('pre');
-                                this.playerIsBlockingMove.fire(this);
-                                this.timeSinceLastMove = 0;
-                                return; //wait in place
+                            if (creature.isPlayer) {
+                                if (this.killMode) { //hurt player
+                                    var that = this;
+                                    var orgPos = utils.getAbsolutePositionByGridPosition(this.row, this.col);
+                                    var destX = Math.sign(creature.view.x - this.view.x) * 10 + this.view.x,
+                                        destY = Math.sign(creature.view.y - this.view.y) * 10 + this.view.y;
+                                    createjs.Tween.get(that.view).to({ x: destX, y: destY }, 50, createjs.Ease.linear).call(function () {
+                                        creature.bump();
+                                        createjs.Tween.get(that.view).to({ x: orgPos.x, y: orgPos.y }, 50, createjs.Ease.linear);
+                                    });
+                                    this.timeSinceLastMove = 0;
+                                    return;
+                                } else if (nextRow == this.row) {
+                                    this.playerIsBlockingMove.fire(this);
+                                    this.timeSinceLastMove = 0;
+                                    return; //wait in place
+                                }
 
                             } else {
                                 nextRow = this.row; //try to move horizontally
@@ -69,6 +93,7 @@
                         this.setPosition(nextRow, nextCol);
                         this.timeSinceLastMove = 0;
                         this.checkForDestinationReached(); //destination reached
+                        this.moved.fire(this);
                     }
                 }
             },
@@ -79,6 +104,22 @@
                     this.finishedMoving.fire();
                 }
             },
+            kill: function (creature) {
+                var that = this;
+                this.killMode = true;
+                this.shouldMove = true;
+                this.movementDestination = { row: creature.row, col: creature.col };
+                this.hideItemCount();
+                creature.moved.add(function() {
+                    that.movementDestination = { row: creature.row, col: creature.col };
+                });
+            },
+            die: function () {
+                this.shouldMove = false;
+                this.speechBubble.alpha = 0;
+                this.hideItemCount();
+                this._super();
+            }
             
         });
     });
