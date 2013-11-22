@@ -46,6 +46,7 @@
                 //callbacks
                 this.viewAdded = $.Callbacks();
                 this.viewRemoved = $.Callbacks();
+                this.npcDied = $.Callbacks();
 
                 //handle player move
                 this.player.moved.add(function() {
@@ -65,6 +66,7 @@
                 npc.died.add(function() {
                     that.npcsInQueue.splice(that.npcsInQueue.indexOf(npc, 1));
                     that.allNpcs.splice(that.allNpcs.indexOf(npc), 1);
+                    that.npcDied.fire();
                 });
                 return npc;
             },

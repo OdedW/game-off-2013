@@ -153,6 +153,7 @@
     <Content Include="Scripts\app\bootstrapper.js" />
     <Content Include="Scripts\app\CashierEntity.js" />
     <Content Include="Scripts\app\constants.js" />
+    <Content Include="Scripts\app\CopEntity.js" />
     <Content Include="Scripts\app\CreatureEntity.js" />
     <Content Include="Scripts\app\gameManager.js" />
     <Content Include="Scripts\app\GameScreen.js" />

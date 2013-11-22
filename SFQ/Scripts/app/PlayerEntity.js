@@ -34,7 +34,7 @@
                     var destX = Math.sign(npc.view.x - this.view.x) * 10 + this.view.x,
                         destY = Math.sign(npc.view.y - this.view.y) * 10 + this.view.y;
                     createjs.Tween.get(that.view).to({ x: destX, y: destY }, 50, createjs.Ease.linear).call(function () {
-                        npc.bump();
+                        npc.bump(that);
                         createjs.Tween.get(that.view).to({ x: orgPos.x, y: orgPos.y }, 50, createjs.Ease.linear);
                     });
                 }
@@ -48,15 +48,16 @@
                     this.winState.fire();
                 }
             },
-            bump: function () {
+            bump: function (npc) {
                 assetManager.playSound('bump');
                 var that = this;
                 var orgPos = utils.getAbsolutePositionByGridPosition(this.row, this.col);
                 this.randomShake(orgPos, this, 6);
                 this.hit();
                 if (this.hitPoints == 0) {
-                    this.die(function() {
-                        that.loseState.fire('Cutting in line is dangerous!');
+                    this.die(function () {
+                        var text = npc.isCop ? "Crime doesn't (always) pay!" : 'Cutting in line is dangerous!';
+                        that.loseState.fire(text);
                     });
                 }
             },

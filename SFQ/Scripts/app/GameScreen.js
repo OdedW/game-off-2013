@@ -1,6 +1,6 @@
 ﻿define('GameScreen',
-    ['createjs', 'Screen', 'PlayerEntity', 'Queue', 'assetManager', 'constants', 'tileManager'],
-    function (createjs, Screen, PlayerEntity, Queue, assetManager, constants, tileManager) {
+    ['createjs', 'Screen', 'PlayerEntity', 'Queue', 'assetManager', 'constants', 'tileManager', 'CopEntity'],
+    function (createjs, Screen, PlayerEntity, Queue, assetManager, constants, tileManager, CopEntity) {
         return Screen.extend({
 
             init: function () {
@@ -29,7 +29,6 @@
                 this.inWinState = false;
                 this.player.winState.add(function () {
                     that.endStateText.text = 'Checked out!';
-                    var b = that.endStateText.getBounds();
                     that.endStateText.x = constants.WORLD_WIDTH / 2;
                     that.endStateText.y = constants.WORLD_HEIGHT / 2;
                     createjs.Tween.get(that.gameWorld).to({ alpha: 0.2 }, 500, createjs.Ease.quadIn);
@@ -38,7 +37,6 @@
                 });
                 this.player.loseState.add(function (text) {
                     that.endStateText.text = text;
-                    var b = that.endStateText.getBounds();
                     that.endStateText.x = constants.WORLD_WIDTH / 2;
                     that.endStateText.y = constants.WORLD_HEIGHT / 2;
                     createjs.Tween.get(that.gameWorld).to({ alpha: 0.2 }, 200, createjs.Ease.quadIn);
@@ -61,6 +59,8 @@
                     that.gameWorld.removeChild(that.hitPointsIcons[that.hitPointsIcons.length - 1]);
                     that.hitPointsIcons.splice(that.hitPointsIcons.length - 1, 1);
                 });
+
+                this.cops = [];
             },
             handleKeyDown: function (e) {
                 if (this.inWinState) {
@@ -76,7 +76,6 @@
                 } else if (e.keyCode === constants.KEY_D || e.keyCode === constants.KEY_RIGHT) {
                     this.player.move(1, 0);
                 }
-
             },
             handleKeyUp: function(e) {
 
@@ -100,6 +99,14 @@
                 queue.viewRemoved.add(function(view) {
                     that.gameWorld.removeChild(view);
                 });
+
+                queue.npcDied.add(function() {
+                    var cop1 = new CopEntity(exit, constants.NUM_COLUMNS - 1, that.player);
+                    var cop2 = new CopEntity(entry, 0, that.player);
+                    that.cops.push(cop1);
+                    that.cops.push(cop2);
+                    that.gameWorld.addChild(cop1.view, cop2.view);
+                });
                 this.queues.push(queue);
             },
             tick: function (evt) {
@@ -108,6 +115,9 @@
                 }
                 for (var i = 0; i < this.queues.length; i++) {
                     this.queues[i].tick(evt);
+                }
+                for (var j = 0; j < this.cops.length; j++) {
+                    this.cops[j].tick(evt);
                 }
             },
             reset: function () {

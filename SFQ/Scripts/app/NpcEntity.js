@@ -2,11 +2,11 @@
     ['CreatureEntity', 'createjs', 'utils', 'text', 'tileManager', 'constants', 'assetManager'],
     function (CreatureEntity, createjs, utils, text, tileManager, constants, assetManager) {
         return CreatureEntity.extend({
-            init: function (row, col) {
+            init: function (row, col, index) {
                 this.mistakeWasMade = false;
                 this.isNpc = true;
                 this.placeInLine = -1;
-                this._super(row, col);
+                this._super(row, col, index);
                 this.movementSpeed = Math.floor(Math.random() * (constants.MAX_MOVEMENT_SPEED - constants.MIN_MOVEMENT_SPEED)) + constants.MIN_MOVEMENT_SPEED;
                 this.shouldMove = false;
                 this.movementDestination = null;
@@ -18,9 +18,6 @@
                 //calbacks
                 this.playerIsBlockingMove = $.Callbacks();
                 this.finishedMoving = $.Callbacks();
-            },
-            createView: function (x, y) {
-                this._super(x, y);
             },
             setItemCount: function() {
                 this.initialItemCount = this.itemCount = Math.floor(Math.random() * 3 + 3);
@@ -52,7 +49,7 @@
                         }
                     });
             },
-            tick: function(evt) {
+            tick: function (evt) {
                 if (this.shouldMove) {
                     this.checkForDestinationReached(); //destination was point of beginning
                     this.timeSinceLastMove += evt.delta;
@@ -70,7 +67,7 @@
                                     var destX = Math.sign(creature.view.x - this.view.x) * 10 + this.view.x,
                                         destY = Math.sign(creature.view.y - this.view.y) * 10 + this.view.y;
                                     createjs.Tween.get(that.view).to({ x: destX, y: destY }, 50, createjs.Ease.linear).call(function () {
-                                        creature.bump();
+                                        creature.bump(that);
                                         createjs.Tween.get(that.view).to({ x: orgPos.x, y: orgPos.y }, 50, createjs.Ease.linear);
                                     });
                                     this.timeSinceLastMove = 0;
