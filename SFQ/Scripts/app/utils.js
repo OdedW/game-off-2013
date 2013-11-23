@@ -96,12 +96,21 @@
                 var pos = getAbsolutePositionByGridPosition(creature.row, creature.col);
                 creature.view.x = pos.x;
                 creature.view.y = pos.y;
+            },
+            msToReadableTime = function(ms) {
+                var totalSeconds = ms / 1000;
+                var minutes = Math.floor(totalSeconds / 60);
+                var seconds = Math.floor(totalSeconds - minutes * 60);
+                return (minutes == 0 ? '00' : (minutes < 10 ? '0' + minutes.toString() : minutes)) + ':' + 
+                    (seconds == 0 ? '00' : (seconds < 10 ? '0' + seconds.toString() : seconds));
+
             };
         return {
             getBounds: getBounds,
             calculateIntersection: calculateIntersection,
             calculateCollision: calculateCollision,
             getAbsolutePositionByGridPosition: getAbsolutePositionByGridPosition,
-            resetPosition: resetPosition
+            resetPosition: resetPosition,
+            msToReadableTime: msToReadableTime
         };
     });

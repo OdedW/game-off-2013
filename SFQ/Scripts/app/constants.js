@@ -18,7 +18,7 @@
             CREATURES_IN_ROW: 18,
             CREATURES_IN_COLUMN: 11,
             TILE_SIZE: 48,
-            FONT: 'Arial',
+            FONT: 'Minecraftia',
 
             //time
             BASE_SCANE_TIME: 1000, //ms

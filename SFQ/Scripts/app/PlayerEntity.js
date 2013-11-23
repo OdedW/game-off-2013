@@ -25,7 +25,7 @@
                     newCol >= 0 && newCol < constants.NUM_COLUMNS) {
                     this.setPosition(newRow, newCol);
                     assetManager.playSound('walk');
-                    this.setItemCount(); //reset items scanned
+//                    this.setItemCount(); //reset items scanned
                     this.moved.fire();
                 } else if (tileManager.collisionMap[newRow][newCol].isNpc) {
                     var npc = tileManager.collisionMap[newRow][newCol];

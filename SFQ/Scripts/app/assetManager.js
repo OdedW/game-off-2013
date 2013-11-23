@@ -12,6 +12,7 @@
                 { src: "/Content/Images/cashier.png", id: "cashier" },
                 { src: "/Content/Images/oryx_items.png", id: "items" },
                 { src: "/Content/Images/heart.png", id: "heart" },
+                { src: "/Content/Images/bag.png", id: "bag" },
                 { src: "/Content/Images/cash_register.png", id: "cashRegister" }, //TODO:  FatCow Web Hosting - http://www.fatcow.com/ 
 
 

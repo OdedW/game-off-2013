@@ -1,6 +1,6 @@
 ﻿define('GameScreen',
-    ['createjs', 'Screen', 'PlayerEntity', 'Queue', 'assetManager', 'constants', 'tileManager', 'CopEntity'],
-    function (createjs, Screen, PlayerEntity, Queue, assetManager, constants, tileManager, CopEntity) {
+    ['createjs', 'Screen', 'PlayerEntity', 'Queue', 'assetManager', 'constants', 'tileManager', 'CopEntity' , 'utils'],
+    function (createjs, Screen, PlayerEntity, Queue, assetManager, constants, tileManager, CopEntity, utils) {
         return Screen.extend({
 
             init: function () {
@@ -59,6 +59,23 @@
                     that.gameWorld.removeChild(that.hitPointsIcons[that.hitPointsIcons.length - 1]);
                     that.hitPointsIcons.splice(that.hitPointsIcons.length - 1, 1);
                 });
+
+                //timer
+                this.timeSinceLevelStart = 0;
+                this.timeLabel = new createjs.Text('00:00', "25px " + constants.FONT, "white");
+                this.timeLabel.x = constants.WORLD_WIDTH - 90;
+                this.timeLabel.y = -2;
+                this.gameWorld.addChild(this.timeLabel);
+
+                //item count
+                var bag = new createjs.Bitmap(assetManager.images.bag);
+                bag.x = 185;
+                bag.y = 4;
+                
+                this.itemCountLabel = new createjs.Text(this.player.itemCount, "25px " + constants.FONT, "white");
+                this.itemCountLabel.x = 140;
+                this.itemCountLabel.y = 0;
+                this.gameWorld.addChild(bag, this.itemCountLabel);
 
                 this.cops = [];
             },
@@ -119,6 +136,13 @@
                 for (var j = 0; j < this.cops.length; j++) {
                     this.cops[j].tick(evt);
                 }
+                
+                //time
+                this.timeSinceLevelStart += evt.delta;
+                this.timeLabel.text = utils.msToReadableTime(this.timeSinceLevelStart);
+                
+                //item count
+                this.itemCountLabel.text = this.player.itemCount;
             },
             reset: function () {
                 tileManager.clearCollisionMap();
