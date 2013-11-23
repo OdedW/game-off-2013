@@ -9,7 +9,7 @@
                 this.shouldMove = true;
                 this.isCop = true;
                 this.movementDestination = { row: player.row, col: player.col };
-                
+                this.say('Stop in the name of the law!');
                 player.moved.add(function() {
                     that.movementDestination = { row: player.row, col: player.col };
                 });
