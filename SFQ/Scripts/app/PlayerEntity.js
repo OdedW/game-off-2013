@@ -17,6 +17,8 @@
 
             },
             move: function (x, y) {
+                if (this.isDead)
+                    return;
                 var newRow = this.row + y,
                     newCol = this.col + x;
                 
@@ -38,9 +40,6 @@
                         createjs.Tween.get(that.view).to({ x: orgPos.x, y: orgPos.y }, 50, createjs.Ease.linear);
                     });
                 }
-            },
-            setItemCount: function () {
-                this.initialItemCount = this.itemCount = 10;
             },
             removeItem: function () {
                 this._super();

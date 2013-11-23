@@ -5,6 +5,8 @@
             init: function() {
                 this.mainView = new createjs.Container();
                 this.mainView.alpha = 0;
+                if (!this.needsReset) //don't create again after reset
+                    this.needsReset = $.Callbacks(); 
             },
             handleKeyDown: function(e) {
 

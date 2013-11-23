@@ -37,6 +37,9 @@
             initializeGraphics = function () {
                 screenManager.init();
                 stage.addChild(screenManager.getCurrentScreen().mainView);
+                screenManager.getCurrentScreen().needsReset.add(function() {
+                    resetScreen();
+                });
 
                 //assetManager.playSound('supermarket', 0.08, true);
                 //assetManager.playSound('bossa', 1, true);
@@ -71,18 +74,21 @@
                         assetManager.toggleMute();
                     }
                     else if (e.keyCode === constants.KEY_R) {
-                        screenManager.getCurrentScreen().hide(function() {
-                            stage.removeChild(screenManager.getCurrentScreen().mainView);
-                            screenManager.getCurrentScreen().reset();
-                            stage.addChild(screenManager.getCurrentScreen().mainView);
-                            screenManager.getCurrentScreen().show();
-                        });
+                        resetScreen();
                     }
                     else if (e.keyCode == constants.KEY_SPACE) {
                         screenManager.getCurrentScreen().player.die();
                     }
                     
                 }
+            },
+            resetScreen = function() {
+                screenManager.getCurrentScreen().hide(function () {
+                    stage.removeChild(screenManager.getCurrentScreen().mainView);
+                    screenManager.getCurrentScreen().reset();
+                    stage.addChild(screenManager.getCurrentScreen().mainView);
+                    screenManager.getCurrentScreen().show();
+                });
             },
             handleKeyUp = function (e) {
                 keysDown[e.keyCode] = false;

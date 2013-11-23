@@ -13,6 +13,7 @@
                 this.row = row;
                 this.col = col;
                 this.hitPoints = 3;
+                this.isDead = false;
 
                 this._super(pos.x, pos.y);
                 tileManager.collisionMap[this.row][this.col] = this;
@@ -98,6 +99,9 @@
                 this.view.y = pos.y;
             },
             say: function (text, timeout, callback) {
+                if (this.isDead)
+                    return;
+
                 if (tileManager.collisionMap[this.row - 1][this.col]) { //someone is one square up
                     this.speechBubble.y = constants.TILE_SIZE;
                 } else {
@@ -108,7 +112,12 @@
                 this.speechBubbleText.text = text;
                 var that = this;
                 
-                createjs.Tween.get(this.speechBubble).to({ alpha: 1 }, 100, createjs.Ease.quadIn);
+                createjs.Tween.get(this.speechBubble).to({ alpha: 1 }, 100, createjs.Ease.quadIn).call(function() {
+                    if (that.isDead) {
+                        createjs.Tween.get(that.speechBubble).to({ alpha: 0 }, 100, createjs.Ease.quadIn);
+                    }
+                });
+                
                 if (this.speechTimeout) {
                     clearInterval(this.speechTimeout);
                 }
@@ -144,7 +153,8 @@
             },
             die: function (callback) {
                 var that = this;
-               
+                this.isDead = true;
+
                 createjs.Tween.get(this.avatar).to({ rotation: 720 }, 1000, createjs.Ease.quadOut).call(function() {
 //                    that.avatar.rotation = 0;
                 });

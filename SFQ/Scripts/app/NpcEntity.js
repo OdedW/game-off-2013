@@ -112,11 +112,11 @@
                 });
             },
             die: function () {
+                console.log('die2');
                 this.shouldMove = false;
+                this._super();
                 this.speechBubble.alpha = 0;
                 this.hideItemCount();
-                this._super();
             }
-            
         });
     });

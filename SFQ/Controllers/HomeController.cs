@@ -18,5 +18,11 @@ namespace SFQ.Controllers
             var path = Server.MapPath("/Content/tilemap.json");
             return Content(System.IO.File.ReadAllText(path));
         }
+        
+        public ActionResult Levels()
+        {
+            var path = Server.MapPath("/Content/levels.json");
+            return Content(System.IO.File.ReadAllText(path));
+        }
     }
 }
