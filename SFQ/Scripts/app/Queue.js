@@ -14,7 +14,9 @@
                 this.npcsInQueue = [];
                 this.allNpcs = [];
                 this.mistakeDialogStarted = false;
-
+                this.isInEndgame = false;
+                this.pauseNpcs = false;
+                
                 //times
                 this.timeSinceLastScan = 0;
                 this.timeSinceLastNpcAddCheck = 0;
@@ -23,6 +25,9 @@
 
                 //create cashier and table
                 this.cashier = new CashierEntity(row - 1, col + this.maxCreatures + 1);
+                this.cashier.died.add(function () {
+                    that.npcDied.fire();
+                });
                 tileManager.collisionMap[this.cashier.row][this.cashier.col] = this.cashier;
                 this.table = new createjs.Bitmap(assetManager.images.table);
                 this.tablePosition = { row: row, col: col + this.maxCreatures + 1 };
@@ -99,13 +104,20 @@
                 }
 
                 //tick rest
-                for (var i = 0; i < this.allNpcs.length; i++) {
-                    this.allNpcs[i].tick(evt);
+                if (!this.pauseNpcs) {
+                    for (var i = 0; i < this.allNpcs.length; i++) {
+                        this.allNpcs[i].tick(evt);
+                    }
+                }
+
+                if (this.isInEndgame) {
+                    this.cashier.tick(evt);
+                    return;
                 }
 
                 //scan
                 var creature = tileManager.collisionMap[this.firstInLinePosition.row][this.firstInLinePosition.col];
-                if (creature) {
+                if (creature && !this.cashier.isDead) {
                     if (!this.mistakeDialogStarted) {
                         this.timeSinceLastScan += evt.delta;
                         if (this.timeSinceLastScan >= constants.BASE_SCANE_TIME) {
@@ -154,6 +166,8 @@
                 var that = this;
                 creature.mistakeWasMade = true;
                 creature.say(text.getRandomText(text.mistakeTexts), 3000, function () {
+                    if (this.isInEndgame)
+                        return;
                     that.cashier.say("Sorry, I'll have to do it again", 3000, function () {
                         creature.itemCount = creature.initialItemCount;
                         that.mistakeDialogStarted = false;
@@ -212,9 +226,13 @@
                 this.viewAdded.fire(npc.view);
             },
             handlePlayerMove: function () {
+                if (this.isInEndgame)
+                    return;
+                
                 if (this.player.row == this.row) {
                     if (this.npcsInQueue.length > 1 &&
-                        this.npcsInQueue[this.npcsInQueue.length - 1].col < this.player.col) { //last
+                        this.npcsInQueue[this.npcsInQueue.length - 1].col < this.player.col && //last
+                        this.player.col < this.tablePosition.col) {
                         if (!this.playerInQueue) { //cut in line
                             var cutee = null;
                             for (var i = 0; i < this.npcsInQueue.length; i++) { //get the closest cutee
@@ -245,6 +263,9 @@
                 this.playerInQueue = this.player.row == this.row;
             },
             npcIsBlockedByPlayer: function (npc) {
+                if (this.isInEndgame)
+                    return;
+                
                 if (this.timeSinceLastCalledToMoveUp == -1 ){ //enough time passed                   
                     if (!this.playerCutInLine &&
                         !tileManager.collisionMap[this.row][this.player.col + 1] && //has place to advance

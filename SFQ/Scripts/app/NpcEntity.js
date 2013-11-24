@@ -14,6 +14,7 @@
                 this.isAggresive = Math.random() < constants.CHANCE_OF_BEING_AGRESSIVE;
                 this.numOfWarningsAfterLineCutting = 0;
                 this.killMode = false;
+                this.ignorePlayerWhenMoving = false;
 
                 //calbacks
                 this.playerIsBlockingMove = $.Callbacks();
@@ -61,23 +62,24 @@
                         if (creature) //occupied
                         {
                             if (creature.isPlayer) {
-                                if (this.killMode) { //hurt player
-                                    var that = this;
-                                    var orgPos = utils.getAbsolutePositionByGridPosition(this.row, this.col);
-                                    var destX = Math.sign(creature.view.x - this.view.x) * 10 + this.view.x,
-                                        destY = Math.sign(creature.view.y - this.view.y) * 10 + this.view.y;
-                                    createjs.Tween.get(that.view).to({ x: destX, y: destY }, 50, createjs.Ease.linear).call(function () {
-                                        creature.bump(that);
-                                        createjs.Tween.get(that.view).to({ x: orgPos.x, y: orgPos.y }, 50, createjs.Ease.linear);
-                                    });
-                                    this.timeSinceLastMove = 0;
-                                    return;
-                                } else if (nextRow == this.row) {
-                                    this.playerIsBlockingMove.fire(this);
-                                    this.timeSinceLastMove = 0;
-                                    return; //wait in place
+                                if (!this.ignorePlayerWhenMoving) {
+                                    if (this.killMode) { //hurt player
+                                        var that = this;
+                                        var orgPos = utils.getAbsolutePositionByGridPosition(this.row, this.col);
+                                        var destX = Math.sign(creature.view.x - this.view.x) * 10 + this.view.x,
+                                            destY = Math.sign(creature.view.y - this.view.y) * 10 + this.view.y;
+                                        createjs.Tween.get(that.view).to({ x: destX, y: destY }, 50, createjs.Ease.linear).call(function() {
+                                            creature.bump(that);
+                                            createjs.Tween.get(that.view).to({ x: orgPos.x, y: orgPos.y }, 50, createjs.Ease.linear);
+                                        });
+                                        this.timeSinceLastMove = 0;
+                                        return;
+                                    } else if (nextRow == this.row) {
+                                        this.playerIsBlockingMove.fire(this);
+                                        this.timeSinceLastMove = 0;
+                                        return; //wait in place
+                                    }
                                 }
-
                             } else {
                                 nextRow = this.row; //try to move horizontally
                                 if (tileManager.collisionMap[nextRow][nextCol]) //occupied
@@ -98,7 +100,7 @@
                 if (this.col === this.movementDestination.col &&
                             this.row === this.movementDestination.row) {
                     this.shouldMove = false;
-                    this.finishedMoving.fire();
+                    this.finishedMoving.fire(this);
                 }
             },
             kill: function (creature) {
@@ -106,7 +108,8 @@
                 this.killMode = true;
                 this.shouldMove = true;
                 this.movementDestination = { row: creature.row, col: creature.col };
-                this.hideItemCount();
+                if (this.itemCountLabel)
+                    this.hideItemCount();
                 creature.moved.add(function() {
                     that.movementDestination = { row: creature.row, col: creature.col };
                 });
@@ -116,7 +119,8 @@
                 this.shouldMove = false;
                 this._super();
                 this.speechBubble.alpha = 0;
-                this.hideItemCount();
+                if (this.itemCountLabel)
+                    this.hideItemCount();
             }
         });
     });

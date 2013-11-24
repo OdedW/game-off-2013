@@ -39,7 +39,9 @@
                     images: [assetManager.images.creatures],
                     frames: { width: this.size.w, height: this.size.h },
                     animations: {
-                        idle: { frames: [this.creatureIndex, this.creatureIndex + constants.CREATURES_IN_ROW], speed: animationSpeed }
+                        idle: { frames: [this.creatureIndex, this.creatureIndex + constants.CREATURES_IN_ROW], speed: animationSpeed },
+                        scared: { frames: [this.creatureIndex, this.creatureIndex + constants.CREATURES_IN_ROW], speed: 0.3 }
+                        
                     }
                 };
                 this.spriteSheet = new createjs.SpriteSheet(data);
@@ -58,7 +60,6 @@
                 this.speechBubbleText.lineWidth = constants.TILE_SIZE * 1.5 - 10;
                 this.speechBubbleText.x = 6;
                 this.speechBubbleText.y = 2;
-                this.speechBubbleText.text = 'testing testing one two three';
                 this.speechBubble.addChild(this.speechBubbleContainer, this.speechBubbleText);
                 this.view.addChild(this.speechBubble);
                 
@@ -98,16 +99,17 @@
                 this.view.x = pos.x;
                 this.view.y = pos.y;
             },
-            say: function (text, timeout, callback) {
+            say: function (text, timeout, callback, dontReposition) {
                 if (this.isDead)
                     return;
-
-                if (tileManager.collisionMap[this.row - 1][this.col]) { //someone is one square up
-                    this.speechBubble.y = constants.TILE_SIZE;
-                } else {
-                    this.speechBubble.y = -constants.TILE_SIZE;
+                if (!dontReposition) {
+                    if (tileManager.collisionMap[this.row - 1][this.col]) { //someone is one square up
+                        this.speechBubble.y = constants.TILE_SIZE;
+                    } else {
+                        this.speechBubble.y = -constants.TILE_SIZE;
+                    }
                 }
-                
+
                 timeout = timeout || 3000;
                 this.speechBubbleText.text = text;
                 var that = this;

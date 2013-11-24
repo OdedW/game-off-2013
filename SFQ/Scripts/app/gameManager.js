@@ -73,12 +73,6 @@
                     else if (e.keyCode === constants.KEY_M) {
                         assetManager.toggleMute();
                     }
-                    else if (e.keyCode === constants.KEY_R) {
-                        resetScreen();
-                    }
-                    else if (e.keyCode == constants.KEY_SPACE) {
-                        screenManager.getCurrentScreen().player.die();
-                    }
                     
                 }
             },

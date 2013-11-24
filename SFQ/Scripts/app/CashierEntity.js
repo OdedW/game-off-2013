@@ -1,13 +1,13 @@
 ﻿define('CashierEntity',
-    ['createjs', 'CreatureEntity', 'text', 'constants', 'assetManager'], function (createjs, CreatureEntity, text, constants, assetManager) {
-        return CreatureEntity.extend({
+    ['createjs', 'CreatureEntity', 'text', 'constants', 'assetManager', 'NpcEntity'], function (createjs, CreatureEntity, text, constants, assetManager, NpcEntity) {
+        return NpcEntity.extend({
             init: function (row, col) {
                 this.name = text.getCashierName(9);
                 this.score = Math.round(Math.random() * 2 + 14);
                 this.accuracy = Math.round(Math.random() * 5 + 5);
                 this.speed = this.score - this.accuracy;
                 this._super(row, col);
-                this.speechBubble.x = this.speechBubble.x = constants.TILE_SIZE;
+                this.speechBubble.x = this.speechBubble.y = constants.TILE_SIZE;
                 this.speechBubble.y = 0;
             },
             createSpriteSheet: function () {

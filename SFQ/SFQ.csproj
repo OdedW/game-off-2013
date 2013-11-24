@@ -131,7 +131,9 @@
     <Content Include="Content\Images\heart.png" />
     <Content Include="Content\Images\oryx_creatures.png" />
     <Content Include="Content\Images\oryx_items.png" />
+    <Content Include="Content\Images\robber.png" />
     <Content Include="Content\Images\table.png" />
+    <Content Include="Content\mooning.png" />
     <Content Include="Content\Site.css">
       <DependentUpon>Site.less</DependentUpon>
     </Content>
@@ -163,6 +165,7 @@
     <Content Include="Scripts\app\NpcEntity.js" />
     <Content Include="Scripts\app\PlayerEntity.js" />
     <Content Include="Scripts\app\Queue.js" />
+    <Content Include="Scripts\app\RobberEntity.js" />
     <Content Include="Scripts\app\Screen.js" />
     <Content Include="Scripts\app\screenManager.js" />
     <Content Include="Scripts\app\text.js" />

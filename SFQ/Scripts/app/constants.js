@@ -13,7 +13,9 @@
             MAX_CREATURES_IN_QUEUE: 7,
             CHANCE_OF_BEING_AGRESSIVE: 1,
             NUM_OF_WARNINGS_BEFORE_ENGAGING: 1,
-
+            ENTRY_ROWS: [1, 3, 5, 7, 9],
+            CORNERS: [{ row: 1, col: 13 }, { row: 9, col: 13 }, { row: 1, col: 0 }, { row: 9, col: 0 }],
+            
             //asset constants
             CREATURES_IN_ROW: 18,
             CREATURES_IN_COLUMN: 11,

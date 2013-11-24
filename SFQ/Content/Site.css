@@ -2,6 +2,7 @@
   padding-top: 50px;
   padding-bottom: 20px;
   background-color: black;
+  background-image: url(mooning.png);
 }
 /* Set padding to keep content from hitting the edges */
 .body-content {
@@ -35,7 +36,7 @@ input[type="checkbox"].input-validation-error {
 }
 .container {
   position: relative;
-  margin-top: 90px;
+  margin-top: 0px;
 }
 .container #canvas-container {
   height: 528px;
