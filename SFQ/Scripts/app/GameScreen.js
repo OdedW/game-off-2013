@@ -57,6 +57,8 @@
                     that.hitPointsIcons.splice(that.hitPointsIcons.length - 1, 1);
                 });
 
+               
+                
                 //timer
                 this.timeSinceLevelStart = 0;
                 this.timeLabel = new createjs.Text('00:00', "25px " + constants.FONT, "#0BF50B");
@@ -77,6 +79,8 @@
                 //endgame
                 this.setupEndgame();
                 this.isInEndgameCutscene = false;
+
+                this.goToMainMenu = $.Callbacks();
             },
             setupLevel: function () {
                 var that = this;
@@ -137,7 +141,9 @@
             },
             handleKeyDown: function (e) {
                 if (e.keyCode == constants.KEY_SPACE) {
-                    this.activateEndGame();
+                    var that = this;
+                    
+                        that.endZoomIn.apply(that);
                 }
                     
                 if (this.inWinState || this.inLoseState) {
@@ -198,7 +204,8 @@
                 tileManager.clearCollisionMap();
                 that.init(that.currentLevel,that.retries + 1);
             },
-            setupEndgame:function() {
+            setupEndgame: function () {
+                this.zoomIteration = 0;
                 this.movieBlocks = new createjs.Shape();
                 this.movieBlocks.alpha = 0;
                 this.movieBlocks.graphics.beginFill("black").drawRect(0, 0, constants.WORLD_WIDTH, constants.TILE_SIZE)
@@ -215,8 +222,27 @@
                 }
                 setTimeout(function () {
 
-                    //enter robber
+                    //robber hitpoints
                     that.robber = new RobberEntity();
+                    that.robberHitPointsIcons = new createjs.Container();
+                    that.robberHitPointsIcons.x = 386;
+                    that.robberHitPointsIcons.y = constants.WORLD_HEIGHT - 42;
+                    that.robberHitPointsIcons.alpha = 0;
+                    var x = 0;
+                    for (var i = 0; i < that.robber.hitPoints; i++) {
+                        var heart = new createjs.Bitmap(assetManager.images.robberHeart);
+                        heart.x = x;
+                        that.robberHitPointsIcons.addChild(heart);
+                        x += 36;
+                    }
+                    that.gameWorld.addChild(that.robberHitPointsIcons);
+
+                    that.robber.tookHit.add(function () {
+                        that.gameWorld.removeChild(that.robberHitPointsIcons[that.robberHitPointsIcons.length - 1]);
+                        that.robberHitPointsIcons.removeChildAt(0);
+                    });
+                    
+                    //enter robber
                     that.gameWorld.addChild(that.robber.view);
                     that.robber.movementDestination = { row: 5, col: 13 };
                     that.robber.shouldMove = true;
@@ -315,6 +341,7 @@
                                     that.isInEndgameCutscene = false;
                                     if (count == 3) {
                                         that.player.moved.remove(tookStep);
+                                        createjs.Tween.get(that.robberHitPointsIcons).to({ alpha: 1 }, 300, createjs.Ease.quadIn);
                                         that.startBossFight.apply(that);
                                     }
                                 });
@@ -329,9 +356,76 @@
                 this.robber.kill(this.player);
                 this.robber.died.add(function() {
                     createjs.Tween.get(that.movieBlocks).to({ alpha: 1 }, 500, createjs.Ease.quadIn);
-                    this.isInEndgameCutscene = true;
+                    that.isInEndgameCutscene = true;
+                    //pick cashier
+                    var cashier = that.player.row > 5 ? that.queues[2].cashier : that.queues[0].cashier;
+                    cashier.movementDestination = { row: that.player.row, col: that.player.col >= 13 ? that.player.col - 1 : that.player.col + 1 };
+                    cashier.shouldMove = true;
+                    cashier.finishedMoving.add(function () {
+                        that.cashierEndDialog.apply(that,[cashier,0]);
+                    });
 
                 });
+            },
+            cashierEndDialog: function (cashier, index) {
+                var that = this;
+                
+                cashier.say(text.cashierEndTexts[index], 3000, function () {
+                    index++;
+                    if (index < text.cashierEndTexts.length)
+                        that.cashierEndDialog.apply(that, [cashier, index]);
+                    else {
+                        that.zoomInterval = setInterval(function() {
+                            that.endZoomIn.apply(that);
+                        }, 1000);
+                    }
+                });
+            },
+            endZoomIn: function () {
+                if (this.zoomIteration === 6) { //cut to black, go to main menu
+                    clearInterval(this.zoomInterval);
+                    this.gameWorld.alpha = 0;
+                    this.goToMainMenu.fire();
+                }
+                if (this.zoomIteration === 0) {
+                    this.player.avatar.gotoAndPlay('still');
+                }
+                this.gameWorld.regX = this.getZoomRegX(this.zoomIteration);
+
+                this.gameWorld.regY = this.getZoomRegY(this.zoomIteration);
+                this.gameWorld.scaleX = this.gameWorld.scaleY = this.gameWorld.scaleY * 2;
+                this.zoomIteration++;
+
+            },
+            getZoomRegY: function (iteration) {
+                if (iteration === 0)
+                    return this.player.view.y - 110;
+                else if(iteration === 1)
+                    return this.player.view.y - 45;
+                else if(iteration === 2)
+                    return this.player.view.y - 13;
+                else if(iteration === 3)
+                    return this.player.view.y +3;
+                else if(iteration === 4)
+                    return this.player.view.y + 12;
+                else if (iteration === 5)
+                    return this.player.view.y +15;
+            },
+            getZoomRegX: function (iteration) {
+                if (iteration === 0)
+                    return this.player.view.x-160;
+                else if(iteration === 1)
+                    return this.player.view.x -70;
+                else if(iteration === 2)
+                    return this.player.view.x -23;
+                else if (iteration === 3)
+                    return this.player.view.x + 1;
+                else if(iteration === 4)
+                    return this.player.view.x + 13;
+                else if (iteration === 5)
+                    return this.player.view.x + 19;
             }
+            
+            
         });
     });

@@ -132,6 +132,7 @@
     <Content Include="Content\Images\oryx_creatures.png" />
     <Content Include="Content\Images\oryx_items.png" />
     <Content Include="Content\Images\robber.png" />
+    <Content Include="Content\Images\robberHeart.png" />
     <Content Include="Content\Images\table.png" />
     <Content Include="Content\mooning.png" />
     <Content Include="Content\Site.css">

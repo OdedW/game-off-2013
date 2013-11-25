@@ -67,6 +67,13 @@
                 ]
                 
             },
+            cashierEndTexts = [
+                'You saved us!',
+                '(Like you had a choice)',
+                'We would like to thank you, and give you',
+                'Free deliveries for life!',
+                'You will never have to stand in line again!'
+            ],
 
             getRobberText = function(arr, index) {
                 if (index >= arr.length)
@@ -87,7 +94,8 @@
             playerHoldingUpLine: playerHoldingUpLine,
             warnAfterLineCutting: warnAfterLineCutting,
             robber: robber,
-            getRobberText: getRobberText
+            getRobberText: getRobberText,
+            cashierEndTexts: cashierEndTexts
         };
     });
 

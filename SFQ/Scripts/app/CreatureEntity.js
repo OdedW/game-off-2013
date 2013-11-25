@@ -40,7 +40,8 @@
                     frames: { width: this.size.w, height: this.size.h },
                     animations: {
                         idle: { frames: [this.creatureIndex, this.creatureIndex + constants.CREATURES_IN_ROW], speed: animationSpeed },
-                        scared: { frames: [this.creatureIndex, this.creatureIndex + constants.CREATURES_IN_ROW], speed: 0.3 }
+                        scared: { frames: [this.creatureIndex, this.creatureIndex + constants.CREATURES_IN_ROW], speed: 0.3 },
+                        still: { frames: [this.creatureIndex], speed: 0.3 }
                         
                     }
                 };

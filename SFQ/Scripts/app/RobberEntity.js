@@ -3,7 +3,7 @@
         return NpcEntity.extend({
             init: function () {
                 this._super(5, 14);
-                this.hitPoints = 5;
+                this.hitPoints = 9;
 
             },
             createSpriteSheet: function () {
