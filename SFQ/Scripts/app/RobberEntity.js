@@ -43,7 +43,7 @@
                 this.view.y = y;
             },
             say:function(txt, timeout, callback) {
-                this._super(txt, timeout || 3000, callback, true);
+                this._super(txt, timeout || 5000, callback, true);
             }
 
         });

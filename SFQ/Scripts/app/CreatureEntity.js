@@ -22,6 +22,8 @@
                 this.moved = $.Callbacks();
                 this.tookHit = $.Callbacks();
                 this.died = $.Callbacks();
+                this.sayingSomething = $.Callbacks();
+
             },
             hit: function () {
                 this.hitPoints--;
@@ -118,6 +120,8 @@
                 createjs.Tween.get(this.speechBubble).to({ alpha: 1 }, 100, createjs.Ease.quadIn).call(function() {
                     if (that.isDead) {
                         createjs.Tween.get(that.speechBubble).to({ alpha: 0 }, 100, createjs.Ease.quadIn);
+                    } else {
+                        that.sayingSomething.fire(that);
                     }
                 });
                 
@@ -125,14 +129,33 @@
                     clearInterval(this.speechTimeout);
                 }
 
+                console.log('set callback - '+((callback) ? 'yes' : 'no'));
+                
+                this.dialogCallback = callback;
                 this.speechTimeout = setTimeout(function () {
-                    createjs.Tween.get(that.speechBubble).to({ alpha: 0 }, 100, createjs.Ease.quadIn);
-                    if (callback)
-                        setTimeout(function () {
-                            callback(that);
-                        }, 100);
+                    that.endDialog.apply(that);
                 }, timeout);
 
+            },
+            endDialog: function () {
+                var that = this;
+                var callback = this.dialogCallback;
+                that.dialogCallback = null;
+
+                createjs.Tween.get(this.speechBubble).to({ alpha: 0 }, 100, createjs.Ease.quadIn);
+                if (callback)
+                    setTimeout(function () {
+                        callback(that);
+                        console.log('resetting callback');
+                    }, 100);
+            },
+            stopSayingSomething: function () {
+                console.log('stop saying - ' + ((this.dialogCallback) ? 'yes' : 'no'));
+                
+                if (this.speechTimeout) {
+                    clearInterval(this.speechTimeout);
+                }
+                this.endDialog();
             },
             removeItem: function () {
                 if (this.itemCount > 0) {
