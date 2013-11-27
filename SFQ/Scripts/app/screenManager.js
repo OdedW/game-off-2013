@@ -1,9 +1,12 @@
 ﻿define('screenManager',
-    ['createjs', 'GameScreen', 'MainMenuScreen', 'CreditsScreen', 'InstructionsScreen'],
-    function (createjs, GameScreen, MainMenuScreen, CreditsScreen, InstructionsScreen) {
-        var
-            screens = [],
+    ['createjs', 'GameScreen', 'MainMenuScreen', 'CreditsScreen', 'InstructionsScreen', 'SplashScreen'],
+    function (createjs, GameScreen, MainMenuScreen, CreditsScreen, InstructionsScreen, SplashScreen) {
+        var screens = [],
             currentScreen,
+            splashScreen,
+            loadSplash = function(callback) {
+                splashScreen = new SplashScreen(callback);
+            },
             init = function () {
                 screens.push(new MainMenuScreen());
                 screens.push(new GameScreen());
@@ -46,6 +49,8 @@
             screens:screens,
             gameScreen: function() {return screens[1]; },
             getCurrentScreen: function () { return currentScreen; },
-            goToScreen: goToScreen
+            goToScreen: goToScreen,
+            loadSplash: loadSplash,
+            splashScreen: function () { return splashScreen; },
         };
 });

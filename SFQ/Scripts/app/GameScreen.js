@@ -259,6 +259,7 @@
             },
             activate: function () {               
                 this.currentLevel = 0;
+                assetManager.playMusic('bossa', 0.3);
                 if (this.needsReset)
                     this.reset();
                 this.paused = false;
@@ -310,6 +311,7 @@
                 this.gameWorld.addChild(this.movieBlocks);
             },
             activateEndGame: function () {
+                assetManager.stopMusic();
                 var that = this;
                 that.isInEndgameCutscene = true;
                 that.isInEndGame = true;
@@ -319,6 +321,7 @@
                     that.queues[j].isInEndgame = true;
                 }
                 setTimeout(function () {
+                    assetManager.playMusic('action', 0.4);
 
                     //robber hitpoints
                     that.robber = new RobberEntity();
@@ -462,7 +465,8 @@
                 var that = this;
                 
                 this.robber.kill(this.player);
-                this.robber.died.add(function() {
+                this.robber.died.add(function () {
+                    assetManager.stopMusic();
                     createjs.Tween.get(that.movieBlocks).to({ alpha: 1 }, 500, createjs.Ease.quadIn);
                     that.isInEndgameCutscene = true;
                     //pick cashier

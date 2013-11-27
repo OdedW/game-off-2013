@@ -130,11 +130,13 @@
     <Content Include="Content\Images\cash_register.png" />
     <Content Include="Content\Images\heart.png" />
     <Content Include="Content\Images\logo.png" />
+    <Content Include="Content\Images\muted.png" />
     <Content Include="Content\Images\oryx_creatures.png" />
     <Content Include="Content\Images\oryx_items.png" />
     <Content Include="Content\Images\robber.png" />
     <Content Include="Content\Images\robberHeart.png" />
     <Content Include="Content\Images\table.png" />
+    <Content Include="Content\Images\unmuted.png" />
     <Content Include="Content\mooning.png" />
     <Content Include="Content\Site.css">
       <DependentUpon>Site.less</DependentUpon>
@@ -174,6 +176,7 @@
     <Content Include="Scripts\app\RobberEntity.js" />
     <Content Include="Scripts\app\Screen.js" />
     <Content Include="Scripts\app\screenManager.js" />
+    <Content Include="Scripts\app\SplashScreen.js" />
     <Content Include="Scripts\app\text.js" />
     <Content Include="Scripts\app\tileManager.js" />
     <Content Include="Scripts\app\utils.js" />

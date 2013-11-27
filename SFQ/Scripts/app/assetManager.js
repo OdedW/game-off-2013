@@ -16,6 +16,8 @@
                 { src: "/Content/Images/robber.png", id: "robber" },
                 { src: "/Content/Images/robberHeart.png", id: "robberHeart" },
                 { src: "/Content/Images/logo.png", id: "logo" },
+                { src: "/Content/Images/muted.png", id: "muted" },
+                { src: "/Content/Images/unmuted.png", id: "unmuted" },
                 { src: "/Content/Images/cash_register.png", id: "cashRegister" }, //TODO:  FatCow Web Hosting - http://www.fatcow.com/ 
 
 
@@ -24,9 +26,9 @@
                 { src: "/Content/Sounds/bump.mp3|/Content/Sounds/bump.ogg", id: 'bump' },
                 { src: "/Content/Sounds/thud.mp3|/Content/Sounds/thud.ogg", id: 'thud' },
                 { src: "/Content/Sounds/beep.mp3|/Content/Sounds/beep.ogg", id: 'beep' },
-//                { src: "/Content/Sounds/supermarket.mp3|/Content/Sounds/supermarke t.ogg", id: 'supermarket' },
-//                { src: "/Content/Sounds/bossa.mp3|/Content/Sounds/bossa.ogg", id: 'bossa' },
-//                { src: "/Content/Sounds/bossa.mp3|/Content/Sounds/action.ogg", id: 'action' },
+                { src: "/Content/Sounds/supermarket.mp3|/Content/Sounds/supermarke t.ogg", id: 'supermarket' },
+                { src: "/Content/Sounds/bossa.mp3|/Content/Sounds/bossa.ogg", id: 'bossa' },
+                { src: "/Content/Sounds/action.mp3|/Content/Sounds/action.ogg", id: 'action' },
             ],
             loadAssets = function () {
                 queue = new createjs.LoadQueue();
@@ -51,10 +53,35 @@
             },
 
         //sound stuff
+            currentMusic,
+            
         isMuted = false,
             playSound = function (id, volume, loop) {
                 volume = volume || 1;
                 var sound = createjs.Sound.play(id, createjs.Sound.INTERRUPT_NONE,0,0,loop? -1 : 0,volume );
+                return sound;
+            },
+            stopMusic = function(callback) {
+                createjs.Tween.get(currentMusic).to({ volume: 0 }, 800, createjs.Ease.quadIn).call(function () {
+                    currentMusic.stop();
+                    if (callback)
+                        callback();
+                });
+            },
+            playMusic = function (id, volume) {
+                if (currentMusic) {
+                    if (currentMusic.id !== id) {
+                        stopMusic(function() {
+                            currentMusic = playSound(id, volume, true);
+                            currentMusic.id = id;
+                        });
+                    }
+                } else {
+                    currentMusic = playSound(id, volume, true);
+                    currentMusic.id = id;
+
+                }
+                
             },
             toggleMute = function () {
                 isMuted = !isMuted;
@@ -67,6 +94,9 @@
             loadCompleteEvent: loadCompleteEvent,
             images: images,
             playSound: playSound,
-            toggleMute: toggleMute
-        };
+            toggleMute: toggleMute,
+            playMusic: playMusic,
+            stopMusic: stopMusic,
+            isMuted: function () { return isMuted; }
+    };
     });

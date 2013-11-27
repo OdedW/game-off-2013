@@ -4,7 +4,7 @@
         var stage,
             canvasWidth,
             canvasHeight,
-            progressLabel,
+            muted, unmuted,
             init = function() {
                 //create stage
                 canvasWidth = $('#game-canvas').width();
@@ -12,24 +12,15 @@
                 stage = new createjs.Stage("game-canvas");
                 stage.enableMouseOver(10);
 
-                progressLabel = new createjs.Text('0', '8px', '#111');
-                progressLabel.x = canvasWidth - 30;
-                progressLabel.y = 0;
-                progressLabel.text = '0%';
-                stage.addChild(progressLabel);
-
-                //load assets
-                assetManager.loadAssets();
-                assetManager.progressChangedEvent.add(function(progress) {
-                    progressLabel.text = Math.floor(progress * 100) + '%';
-                    if (progress >= 1) {
-                        stage.removeChild(progressLabel);
-                    }
-//                    console.log(progressLabel.text);
-
+                createjs.Ticker.requestRAF = true;
+                createjs.Ticker.setFPS(constants.FPS);
+                createjs.Ticker.addEventListener("tick", tick);
+                
+                screenManager.loadSplash(function () {
+                    initializeGraphics();
                 });
-                assetManager.loadCompleteEvent.add(initializeGraphics);
 
+                stage.addChild(screenManager.splashScreen().mainView);
 
                 //temp
                 //assetManager.toggleMute();
@@ -41,15 +32,15 @@
                     stage.addChild(screenManager.screens[i].mainView);
                 }
 
-                //assetManager.playSound('supermarket', 0.08, true);
-                //assetManager.playSound('bossa', 1, true);
-
+                muted = new createjs.Bitmap(assetManager.images.muted);
+                muted.x = 20;muted.y = constants.WORLD_HEIGHT - 38;muted.scaleX = muted.scaleY = 0.5; muted.alpha = 0;
+                unmuted = new createjs.Bitmap(assetManager.images.unmuted);
+                unmuted.x = 20; unmuted.y = constants.WORLD_HEIGHT - 38; unmuted.scaleX = unmuted.scaleY = 0.5; unmuted.alpha = 0;
+                stage.addChild(muted, unmuted);
                 setupKeys();
-
+                screenManager.getCurrentScreen().activate();
                 screenManager.getCurrentScreen().show();
-                createjs.Ticker.requestRAF = true;
-                createjs.Ticker.setFPS(constants.FPS);
-                createjs.Ticker.addEventListener("tick", tick);
+                
 
             },
             //Key handling
@@ -67,6 +58,11 @@
                     screenManager.getCurrentScreen().handleKeyDown(e);
 
                     if (e.keyCode === constants.KEY_M) {
+                        var icon = assetManager.isMuted() ? unmuted : muted;
+                        createjs.Tween.get(icon).to({ alpha: 1 }, 200, createjs.Ease.quadIn);
+                        setTimeout(function() {
+                            createjs.Tween.get(icon).to({ alpha: 0 }, 400, createjs.Ease.quadIn);
+                        },1000);
                         assetManager.toggleMute();
                     }
 
@@ -78,8 +74,9 @@
                 screenManager.getCurrentScreen().handleKeyUp(e);
             },            
             //Tick
-            tick = function(evt) {
-                screenManager.getCurrentScreen().tick(evt);
+            tick = function (evt) {
+                if (screenManager.getCurrentScreen())
+                    screenManager.getCurrentScreen().tick(evt);
                 stage.update();
             };
             
