@@ -73,7 +73,6 @@
                 this.view.mouseEnabled = true;
 
                 this.itemCountLabel.alpha = 0;
-            }
-
+            },            
         });
     });

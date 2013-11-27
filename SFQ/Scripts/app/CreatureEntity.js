@@ -53,18 +53,7 @@
                 this.view = new createjs.Container();
                 
                 //speech bubble
-                this.speechBubble = new createjs.Container();
-                this.speechBubbleContainer = new createjs.Shape();
-                this.speechBubbleContainer.graphics.beginFill("gray").drawRoundRect(0, 0, constants.TILE_SIZE * 1.5, constants.TILE_SIZE * 1, 5).beginFill("black").drawRoundRect(2, 2, constants.TILE_SIZE * 1.5 - 4, constants.TILE_SIZE * 1 - 4, 5);
-                this.speechBubble.alpha = 0;
-                this.speechBubble.x = -constants.TILE_SIZE/2;
-                this.speechBubble.y = -constants.TILE_SIZE;
-                this.speechBubbleText = new createjs.Text(this.name, "10px " + constants.FONT + "", "white");
-                this.speechBubbleText.lineWidth = constants.TILE_SIZE * 1.5 - 10;
-                this.speechBubbleText.x = 6;
-                this.speechBubbleText.y = 2;
-                this.speechBubble.addChild(this.speechBubbleContainer, this.speechBubbleText);
-                this.view.addChild(this.speechBubble);
+                this.createSpeechBubble(constants.TILE_SIZE * 1.5, constants.TILE_SIZE, -constants.TILE_SIZE / 2, -constants.TILE_SIZE, '10px', 11);
                 
                 this.avatar = new createjs.Sprite(this.spriteSheet, 'idle');
                 this.avatar.regX = this.avatar.regY = this.size.w / 2;
@@ -87,6 +76,25 @@
                 this.firstInLine = false;
                 this.itemCountLabel.addChild(circle, this.itemCountText);
                 this.view.addChild(this.itemCountLabel);
+            },
+            createSpeechBubble: function (width, height, x, y, fontSize, lineHeight) {
+                if (this.speechBubble) {
+                    this.view.removeChild(this.speechBubble);
+                }
+                this.speechBubble = new createjs.Container();
+                this.speechBubbleContainer = new createjs.Shape();
+                this.speechBubbleContainer.graphics.beginFill("gray").drawRoundRect(0, 0, width, height, 5)
+                    .beginFill("black").drawRoundRect(2, 2, width - 4, height - 4, 5);
+                this.speechBubble.alpha = 0;
+                this.speechBubble.x = x;
+                this.speechBubble.y = y;
+                this.speechBubbleText = new createjs.Text(this.name, fontSize + " " + constants.FONT + "", "white");
+                this.speechBubbleText.lineWidth = width - 10;
+                this.speechBubbleText.x = 6;
+                this.speechBubbleText.y = 2;
+                this.speechBubbleText.lineHeight = lineHeight;
+                this.speechBubble.addChild(this.speechBubbleContainer, this.speechBubbleText);
+                this.view.addChild(this.speechBubble);
             },
             tick: function(evt) {
             },
@@ -129,8 +137,6 @@
                     clearInterval(this.speechTimeout);
                 }
 
-                console.log('set callback - '+((callback) ? 'yes' : 'no'));
-                
                 this.dialogCallback = callback;
                 this.speechTimeout = setTimeout(function () {
                     that.endDialog.apply(that);
@@ -146,12 +152,9 @@
                 if (callback)
                     setTimeout(function () {
                         callback(that);
-                        console.log('resetting callback');
                     }, 100);
             },
             stopSayingSomething: function () {
-                console.log('stop saying - ' + ((this.dialogCallback) ? 'yes' : 'no'));
-                
                 if (this.speechTimeout) {
                     clearInterval(this.speechTimeout);
                 }
@@ -189,7 +192,7 @@
                 });
                 createjs.Tween.get(this.avatar).to({ scaleX: 0 }, 1000, createjs.Ease.quadOut).call(function () {
 //                    that.avatar.scaleX = 1;
-                });;
+                });
                 createjs.Tween.get(this.avatar).to({ scaleY: 0 }, 1000, createjs.Ease.quadOut).call(function () {
 //                    that.avatar.scaleY = 1;
                 });

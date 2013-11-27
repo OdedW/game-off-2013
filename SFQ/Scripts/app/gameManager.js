@@ -26,12 +26,14 @@
                     if (progress >= 1) {
                         stage.removeChild(progressLabel);
                     }
+//                    console.log(progressLabel.text);
+                    
                 });                
                 assetManager.loadCompleteEvent.add(initializeGraphics);
                 
 
                 //temp
-                assetManager.toggleMute();
+                //assetManager.toggleMute();
 
             },
             initializeGraphics = function () {

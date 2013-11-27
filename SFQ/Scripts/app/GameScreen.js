@@ -95,9 +95,9 @@
                     this.createQueue(currentLevel.queues[i]);
                 }
 
-                if (this.currentLevel == 0){//window.levels.length - 1){ //last level, trigger end game
+                if (this.currentLevel === 0){//window.levels.length - 1){ //last level, trigger end game
                     this.player.moved.add(function triggerEndGame() {
-                        if (that.player.col == 3) {
+                        if (that.player.col === 3) {
                             that.player.moved.remove(triggerEndGame);
                             that.activateEndGame();
                         }
@@ -141,7 +141,7 @@
                 createjs.Tween.get(this.pressAnyKeyText).to({ alpha: 1 }, 200, createjs.Ease.quadIn);
             },
             handleKeyDown: function (e) {
-                if (e.keyCode == constants.KEY_SPACE) {
+                if (e.keyCode === constants.KEY_SPACE) {
                     if (this.npcInDialog)
                         this.npcInDialog.stopSayingSomething();
                 }
@@ -246,7 +246,19 @@
                     
                     //enter robber
                     that.gameWorld.addChild(that.robber.view);
-                    that.robber.movementDestination = { row: 5, col: 13 };
+                    var row = 5, col = 13;
+                    if (tileManager.collisionMap[row][col]) {
+                        row = 6;
+                        if (tileManager.collisionMap[row][col]) {
+                            row = 4;
+                            if (tileManager.collisionMap[row][col]) {
+                                row = 5;
+                                col = 12;
+                                that.robber.ignoreNpcsWhenMoving = true;
+                            }
+                        }
+                    }
+                    that.robber.movementDestination = { row: row, col: col };
                     that.robber.shouldMove = true;
                     that.robber.finishedMoving.add(function sayStickup() {
                         that.robber.say(text.getRobberText(text.robber.enterTexts, that.retries),5000,function() {
@@ -333,7 +345,7 @@
                                         that.robber.say(msg, 3000, function () {
                                             createjs.Tween.get(that.movieBlocks).to({ alpha: 0 }, 500, createjs.Ease.quadIn);
                                             that.isInEndgameCutscene = false;
-                                            if (count == 3) {
+                                            if (count === 3) {
                                                 that.player.moved.remove(tookStep);
                                                 createjs.Tween.get(that.robberHitPointsIcons).to({ alpha: 1 }, 300, createjs.Ease.quadIn);
                                                 that.startBossFight.apply(that);
@@ -356,9 +368,13 @@
                     createjs.Tween.get(that.movieBlocks).to({ alpha: 1 }, 500, createjs.Ease.quadIn);
                     that.isInEndgameCutscene = true;
                     //pick cashier
-                    var cashier = that.player.row > 5 ? that.queues[2].cashier : that.queues[0].cashier;
+                    var cashier = that.player.row > 5 ? that.queues[1].cashier : that.queues[0].cashier;
                     cashier.movementDestination = { row: that.player.row, col: that.player.col >= 13 ? that.player.col - 1 : that.player.col + 1 };
                     cashier.shouldMove = true;
+                    //create a bigger speech bubbles
+                    cashier.createSpeechBubble(constants.TILE_SIZE * 2, constants.TILE_SIZE * 2, -constants.TILE_SIZE / 2, -constants.TILE_SIZE * 2, '13px', 15);
+                    that.gameWorld.removeChild(cashier.view);
+                    that.gameWorld.addChild(cashier.view);
                     cashier.sayingSomething.add(function (npc) {
                         that.npcInDialog = npc;
                     });
@@ -370,7 +386,6 @@
             },
             cashierEndDialog: function (cashier, index) {
                 var that = this;
-                
                 cashier.say(text.cashierEndTexts[index], 3000, function () {
                     index++;
                     if (index < text.cashierEndTexts.length)
@@ -380,9 +395,10 @@
                             that.endZoomIn.apply(that);
                         }, 1000);
                     }
-                });
+                },true);
             },
             endZoomIn: function () {
+                assetManager.playSound('thud');
                 if (this.zoomIteration === 6) { //cut to black, go to main menu
                     clearInterval(this.zoomInterval);
                     this.gameWorld.alpha = 0;
@@ -392,7 +408,6 @@
                     this.player.avatar.gotoAndPlay('still');
                 }
                 this.gameWorld.regX = this.getZoomRegX(this.zoomIteration);
-
                 this.gameWorld.regY = this.getZoomRegY(this.zoomIteration);
                 this.gameWorld.scaleX = this.gameWorld.scaleY = this.gameWorld.scaleY * 2;
                 this.zoomIteration++;

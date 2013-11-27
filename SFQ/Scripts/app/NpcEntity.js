@@ -15,6 +15,7 @@
                 this.numOfWarningsAfterLineCutting = 0;
                 this.killMode = false;
                 this.ignorePlayerWhenMoving = false;
+                this.ignoreNpcsWhenMoving = false;
 
                 //calbacks
                 this.playerIsBlockingMove = $.Callbacks();
@@ -26,7 +27,7 @@
             bump: function () {
                 assetManager.playSound('bump');
                 this.hit();
-                if (this.hitPoints == 0) {
+                if (this.hitPoints === 0) {
                     this.die();
                     return;
                 }
@@ -74,13 +75,13 @@
                                         });
                                         this.timeSinceLastMove = 0;
                                         return;
-                                    } else if (nextRow == this.row) {
+                                    } else if (nextRow === this.row) {
                                         this.playerIsBlockingMove.fire(this);
                                         this.timeSinceLastMove = 0;
                                         return; //wait in place
                                     }
                                 }
-                            } else {
+                            } else if (!this.ignoreNpcsWhenMoving){
                                 nextRow = this.row; //try to move horizontally
                                 if (tileManager.collisionMap[nextRow][nextCol]) //occupied
                                 {
@@ -121,6 +122,6 @@
                 this.speechBubble.alpha = 0;
                 if (this.itemCountLabel)
                     this.hideItemCount();
-            }
+            }          
         });
     });

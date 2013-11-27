@@ -92,12 +92,12 @@
             },
             tick: function (evt) {
                 //advance times
-                if (this.timeSinceLastCalledToMoveUp != -1) {
+                if (this.timeSinceLastCalledToMoveUp !== -1) {
                     this.timeSinceLastCalledToMoveUp += evt.delta;
                     if (this.timeSinceLastCalledToMoveUp > constants.TIME_BETWEEN_CALLS_TO_MOVE_UP)
                         this.timeSinceLastCalledToMoveUp = -1;
                 }
-                if (this.timeSinceLastWarnedAboutLineCutting != -1) {
+                if (this.timeSinceLastWarnedAboutLineCutting !== -1) {
                     this.timeSinceLastWarnedAboutLineCutting += evt.delta;
                     if (this.timeSinceLastWarnedAboutLineCutting > constants.TIME_BETWEEN_WARNINGS)
                         this.timeSinceLastWarnedAboutLineCutting = -1;
@@ -149,7 +149,7 @@
                     this.currentItem.x = pos.x + 27;
                     this.currentItem.y = pos.y + 9;
                     this.viewAdded.fire(this.currentItem);
-                    //assetManager.playSound('beep', 0.1);
+                    assetManager.playSound('beep', 0.1);
                 } else if (creature.isNpc) { //npc
                     //chance for mistake
                     if (!creature.mistakeWasMade && Math.random() * 10 > this.cashier.accuracy) {
@@ -229,7 +229,7 @@
                 if (this.isInEndgame)
                     return;
                 
-                if (this.player.row == this.row) {
+                if (this.player.row === this.row) {
                     if (this.npcsInQueue.length > 1 &&
                         this.npcsInQueue[this.npcsInQueue.length - 1].col < this.player.col && //last
                         this.player.col < this.tablePosition.col) {
@@ -246,7 +246,7 @@
                                 }
                             }
                             if (cutee) {
-                                if (cutee.placeInLine == this.npcsInQueue.length - 1 && //last in line
+                                if (cutee.placeInLine === this.npcsInQueue.length - 1 && //last in line
                                     this.player.col - cutee.col > 1) //didn't reach end of the line yet, not quite cutting in line
                                     cutee.say(text.getRandomText(text.notQuiteCutInLineTexts));
                                 else {
@@ -260,13 +260,13 @@
                 } else {
                     this.playerCutInLine = false;
                 }
-                this.playerInQueue = this.player.row == this.row;
+                this.playerInQueue = this.player.row === this.row;
             },
             npcIsBlockedByPlayer: function (npc) {
                 if (this.isInEndgame)
                     return;
                 
-                if (this.timeSinceLastCalledToMoveUp == -1 ){ //enough time passed                   
+                if (this.timeSinceLastCalledToMoveUp === -1 ){ //enough time passed                   
                     if (!this.playerCutInLine &&
                         !tileManager.collisionMap[this.row][this.player.col + 1] && //has place to advance
                         this.player.col < this.tablePosition.col - 1) { //not first in line
@@ -275,7 +275,7 @@
                     this.timeSinceLastCalledToMoveUp = 0;
                 }
                 
-                if (this.timeSinceLastWarnedAboutLineCutting == -1) {
+                if (this.timeSinceLastWarnedAboutLineCutting === -1) {
                     if (this.playerCutInLine) {
                         if (npc.numOfWarningsAfterLineCutting < constants.NUM_OF_WARNINGS_BEFORE_ENGAGING) {
                             npc.say(text.getRandomText(text.warnAfterLineCutting), 1500);
