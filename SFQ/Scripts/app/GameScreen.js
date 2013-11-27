@@ -80,8 +80,6 @@
                 this.setupEndgame();
                 this.isInEndgameCutscene = false;
                 this.npcInDialog = null;
-
-                this.goToMainMenu = $.Callbacks();
             },
             setupLevel: function () {
                 var that = this;
@@ -148,7 +146,6 @@
                     
                 if (this.inWinState || this.inLoseState) {
                     this.currentLevel += this.inWinState ? 1 : 0;
-                    this.needsReset.fire();
                 }
 
                 if (this.isInEndgameCutscene)
@@ -168,8 +165,10 @@
             handleKeyUp: function(e) {
 
             },
-            activate: function() {
-
+            activate: function () {
+                this.currentLevel = 0;
+                if (this.needsReset)
+                    this.reset();
             },
            
             tick: function (evt) {
@@ -398,11 +397,15 @@
                 },true);
             },
             endZoomIn: function () {
+                var that = this;
                 assetManager.playSound('thud');
                 if (this.zoomIteration === 6) { //cut to black, go to main menu
                     clearInterval(this.zoomInterval);
                     this.gameWorld.alpha = 0;
-                    this.goToMainMenu.fire();
+                    setTimeout(function () {
+                        that.needsReset = true;
+                        that.goToMainMenuScreen.fire();
+                    }, 1000);
                 }
                 if (this.zoomIteration === 0) {
                     this.player.avatar.gotoAndPlay('still');

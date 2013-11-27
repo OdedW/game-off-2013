@@ -63,5 +63,6 @@
             KEY_DOWN: 40,
             KEY_SPACE: 32,
             KEY_LCTRL: 17,
+            KEY_ENTER: 13
         };
     });

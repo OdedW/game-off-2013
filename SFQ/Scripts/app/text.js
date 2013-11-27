@@ -72,7 +72,7 @@
                 '(Like you had a choice)',
                 'We would like to thank you, and give you',
                 'Free deliveries for life!',
-                'You will never have to stand in line again!'
+                'You will never have to stand in line AGAIN!'
             ],
 
             getRobberText = function(arr, index) {

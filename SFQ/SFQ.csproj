@@ -129,6 +129,7 @@
     <Content Include="Content\Images\cashier.png" />
     <Content Include="Content\Images\cash_register.png" />
     <Content Include="Content\Images\heart.png" />
+    <Content Include="Content\Images\logo.png" />
     <Content Include="Content\Images\oryx_creatures.png" />
     <Content Include="Content\Images\oryx_items.png" />
     <Content Include="Content\Images\robber.png" />
@@ -161,8 +162,12 @@
     <Content Include="Scripts\app\constants.js" />
     <Content Include="Scripts\app\CopEntity.js" />
     <Content Include="Scripts\app\CreatureEntity.js" />
+    <Content Include="Scripts\app\CreditsScreen.js" />
     <Content Include="Scripts\app\gameManager.js" />
     <Content Include="Scripts\app\GameScreen.js" />
+    <Content Include="Scripts\app\InstructionsScreen.js" />
+    <Content Include="Scripts\app\MainMenuScreen.js" />
+    <Content Include="Scripts\app\MenuScreen.js" />
     <Content Include="Scripts\app\NpcEntity.js" />
     <Content Include="Scripts\app\PlayerEntity.js" />
     <Content Include="Scripts\app\Queue.js" />
