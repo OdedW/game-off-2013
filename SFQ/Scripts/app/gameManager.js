@@ -4,7 +4,6 @@
         var stage,
             canvasWidth,
             canvasHeight,
-            paused = false,
             progressLabel,
             init = function() {
                 //create stage
@@ -12,7 +11,7 @@
                 canvasHeight = $('#game-canvas').height();
                 stage = new createjs.Stage("game-canvas");
                 stage.enableMouseOver(10);
-                
+
                 progressLabel = new createjs.Text('0', '8px', '#111');
                 progressLabel.x = canvasWidth - 30;
                 progressLabel.y = 0;
@@ -27,16 +26,16 @@
                         stage.removeChild(progressLabel);
                     }
 //                    console.log(progressLabel.text);
-                    
-                });                
+
+                });
                 assetManager.loadCompleteEvent.add(initializeGraphics);
-                
+
 
                 //temp
                 //assetManager.toggleMute();
 
             },
-            initializeGraphics = function () {
+            initializeGraphics = function() {
                 screenManager.init();
                 for (var i = 0; i < screenManager.screens.length; i++) {
                     stage.addChild(screenManager.screens[i].mainView);
@@ -52,48 +51,38 @@
                 createjs.Ticker.setFPS(constants.FPS);
                 createjs.Ticker.addEventListener("tick", tick);
 
-            },            
+            },
             //Key handling
-            setupKeys = function(){
+            setupKeys = function() {
                 document.onkeydown = handleKeyDown;
                 document.onkeyup = handleKeyUp;
 //                document.onmousedown = handleKeyDown;
 //                document.onmouseup = handleKeyUp;
             },
             keysDown = {},
-            handleKeyDown = function (e) {
+            handleKeyDown = function(e) {
                 if (!keysDown[e.keyCode]) {
                     keysDown[e.keyCode] = true;
 
                     screenManager.getCurrentScreen().handleKeyDown(e);
 
-                    if (e.keyCode === constants.KEY_P) {
-                        togglePause();
-                    }
-
-                    else if (e.keyCode === constants.KEY_M) {
+                    if (e.keyCode === constants.KEY_M) {
                         assetManager.toggleMute();
                     }
-                    
+
                 }
             },
-            handleKeyUp = function (e) {
+            handleKeyUp = function(e) {
                 keysDown[e.keyCode] = false;
-                
+
                 screenManager.getCurrentScreen().handleKeyUp(e);
-            },
-            
+            },            
             //Tick
-            tick = function (evt) {
-                if (!paused) {
-                    screenManager.getCurrentScreen().tick(evt);
-                }
+            tick = function(evt) {
+                screenManager.getCurrentScreen().tick(evt);
                 stage.update();
-            },
-            togglePause = function () {
-                paused = !paused;
-                createjs.Tween.get(screenManager.getCurrentScreen().mainView).to({ alpha: paused ? 0.4 : 1 }, 200, createjs.Ease.quadIn);
             };
+            
         
 
         return {

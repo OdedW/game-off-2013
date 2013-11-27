@@ -3,13 +3,16 @@
     function (createjs, Screen, PlayerEntity, Queue, assetManager, constants, tileManager, CopEntity, utils, RobberEntity, text) {
         return Screen.extend({
 
-            init: function (level, retries) {
+            init: function (level, endGameRetries, afterReset) {
                 var that = this;
                 this.currentLevel = level || 0;
-                this.retries = retries || 0;
-                this._super();
+                this.endGameRetries = endGameRetries || 0;
+                if (!afterReset) {
+                    this._super();
+                }
                 this.gameWorld = new createjs.Container();
                 this.mainView.addChild(this.gameWorld);
+                this.isInEndGame = false;
 
                 //win text
                 this.endStateText = new createjs.Text('Checked out!', "36px Minecraftia", "white");
@@ -80,6 +83,24 @@
                 this.setupEndgame();
                 this.isInEndgameCutscene = false;
                 this.npcInDialog = null;
+                
+                //pause
+                this.paused = false;
+                this.pauseMenu = new createjs.Container();
+                this.pauseMenu.setBounds(0, 0, constants.WORLD_WIDTH, constants.WORLD_HEIGHT);
+                var backToGame = this.createOutlinedText('Continue shopping', 18, 210, 2, this.highlightedColor);
+                var resetCampaign = this.createOutlinedText('Reset Campaign', 18, 250, 2);
+                var backToMenu = this.createOutlinedText('Back to main menu', 18, 290, 2);
+                this.pauseMenu.addChild(backToGame, resetCampaign, backToMenu);
+                this.pauseMenu.alpha = 0;
+                this.pauseMenuSelectedItem = 0;
+                this.mainView.addChild(this.pauseMenu);
+
+            },
+            togglePause:function() {
+                this.paused = !this.paused;
+                createjs.Tween.get(this.gameWorld).to({ alpha: this.paused ? 0.2 : 1 }, 200, createjs.Ease.quadIn);
+                createjs.Tween.get(this.pauseMenu).to({ alpha: this.paused ? 1 : 0 }, 200, createjs.Ease.quadIn);
             },
             setupLevel: function () {
                 var that = this;
@@ -139,40 +160,82 @@
                 createjs.Tween.get(this.pressAnyKeyText).to({ alpha: 1 }, 200, createjs.Ease.quadIn);
             },
             handleKeyDown: function (e) {
-                if (e.keyCode === constants.KEY_SPACE) {
+                var that = this;
+                if (e.keyCode === constants.KEY_SPACE || e.keyCode === constants.KEY_ENTER) {
                     if (this.npcInDialog)
                         this.npcInDialog.stopSayingSomething();
                 }
-                    
-                if (this.inWinState || this.inLoseState) {
-                    this.currentLevel += this.inWinState ? 1 : 0;
+                
+                if (e.keyCode === constants.KEY_P || e.keyCode === constants.KEY_ESC) {
+                    this.togglePause();
                 }
 
-                if (this.isInEndgameCutscene)
-                    return;
+                if (this.inWinState || this.inLoseState) {
+                    this.currentLevel += this.inWinState ? 1 : 0;
+                    this.reset();
+                }
+
                 
-                //movement
-                if (e.keyCode === constants.KEY_S || e.keyCode === constants.KEY_DOWN) {
-                    this.player.move(0, 1);
-                } else if (e.keyCode === constants.KEY_A || e.keyCode === constants.KEY_LEFT) {
-                    this.player.move(-1, 0);
-                } else if (e.keyCode === constants.KEY_W || e.keyCode === constants.KEY_UP) {
-                    this.player.move(0, -1);
-                } else if (e.keyCode === constants.KEY_D || e.keyCode === constants.KEY_RIGHT) {
-                    this.player.move(1, 0);
+
+                if (this.paused) {
+                    if (e.keyCode === constants.KEY_S || e.keyCode === constants.KEY_DOWN) {
+                        for (var i = 0; i < this.pauseMenu.children.length; i++) {
+                            this.pauseMenu.children[i].main.color = this.unHighlightedColor;
+                        }
+                        this.pauseMenuSelectedItem++;
+                        if (this.pauseMenuSelectedItem == this.pauseMenu.children.length) this.pauseMenuSelectedItem = 0;
+                        this.pauseMenu.children[this.pauseMenuSelectedItem].main.color = this.highlightedColor;
+                    } else if(e.keyCode === constants.KEY_W || e.keyCode === constants.KEY_UP) {
+                        for (var i = 0; i < this.pauseMenu.children.length; i++) {
+                            this.pauseMenu.children[i].main.color = this.unHighlightedColor;
+                        }
+                        this.pauseMenuSelectedItem--;
+                        if (this.pauseMenuSelectedItem == -1) this.pauseMenuSelectedItem = this.pauseMenu.children.length-1;
+                        this.pauseMenu.children[this.pauseMenuSelectedItem].main.color = this.highlightedColor;
+                    }
+                    if (e.keyCode === constants.KEY_SPACE || e.keyCode === constants.KEY_ENTER) {
+                        if (this.pauseMenuSelectedItem === 0) {
+                            this.togglePause();
+                        }
+                        if (this.pauseMenuSelectedItem === 1) {
+                            this.reset();
+                        }
+                         else if (this.pauseMenuSelectedItem === 2) {
+                             this.goToMainMenuScreen.fire();
+                            setTimeout(function() {
+                                that.pauseMenu.alpha = 0;
+                                that.gameWorld.alpha = 1;
+                            }, 500);
+                        }
+                    }
+                } else {
+                    if (this.isInEndgameCutscene)
+                        return;
+                    
+                    //movement
+                    if (e.keyCode === constants.KEY_S || e.keyCode === constants.KEY_DOWN) {
+                        this.player.move(0, 1);
+                    } else if (e.keyCode === constants.KEY_A || e.keyCode === constants.KEY_LEFT) {
+                        this.player.move(-1, 0);
+                    } else if (e.keyCode === constants.KEY_W || e.keyCode === constants.KEY_UP) {
+                        this.player.move(0, -1);
+                    } else if (e.keyCode === constants.KEY_D || e.keyCode === constants.KEY_RIGHT) {
+                        this.player.move(1, 0);
+                    }
                 }
             },
             handleKeyUp: function(e) {
 
             },
-            activate: function () {
+            activate: function () {               
                 this.currentLevel = 0;
                 if (this.needsReset)
                     this.reset();
+                this.paused = false;
             },
            
             tick: function (evt) {
-                if (this.inWinState || this.inLoseState) {
+                if (this.inWinState || this.inLoseState || this.paused) {
                     return;
                 }
                 
@@ -199,9 +262,14 @@
             },
             reset: function () {
                 var that = this;
-                that.mainView.removeAllChildren();
-                tileManager.clearCollisionMap();
-                that.init(that.currentLevel,that.retries + 1);
+                
+                this.hide(function() {
+                    that.mainView.removeAllChildren();
+                    tileManager.clearCollisionMap();
+                    that.init.apply(that, [that.currentLevel, that.endGameRetries + (that.inLoseState && that.isInEndGame ? 1 : 0), true]);
+                    that.show();
+                });
+                
             },
             setupEndgame: function () {
                 this.zoomIteration = 0;
@@ -214,6 +282,7 @@
             activateEndGame: function () {
                 var that = this;
                 that.isInEndgameCutscene = true;
+                that.isInEndGame = true;
                 createjs.Tween.get(this.movieBlocks).to({ alpha: 1 }, 500, createjs.Ease.quadIn);
                 for (var j = 0; j < that.queues.length; j++) {
                     that.queues[j].pauseNpcs = true;
@@ -260,7 +329,7 @@
                     that.robber.movementDestination = { row: row, col: col };
                     that.robber.shouldMove = true;
                     that.robber.finishedMoving.add(function sayStickup() {
-                        that.robber.say(text.getRobberText(text.robber.enterTexts, that.retries),5000,function() {
+                        that.robber.say(text.getRobberText(text.robber.enterTexts, that.endGameRetries), 5000, function () {
                             //move everyone to the back
                             var count = 0;
                             for (var j = 0; j < that.queues.length; j++) {
@@ -322,9 +391,9 @@
             },
             continueEndGameWithRobber: function () {
                 var that = this;
-                this.robber.say(text.getRobberText(text.robber.afterEveryoneLeaves, that.retries)[0],5000, function() {
-                    that.robber.say(text.getRobberText(text.robber.afterEveryoneLeaves, that.retries)[1], 6000,function() {
-                        that.robber.say(text.getRobberText(text.robber.afterEveryoneLeaves, that.retries)[2],6000,function() {
+                this.robber.say(text.getRobberText(text.robber.afterEveryoneLeaves, that.endGameRetries)[0], 5000, function () {
+                    that.robber.say(text.getRobberText(text.robber.afterEveryoneLeaves, that.endGameRetries)[1], 6000, function () {
+                        that.robber.say(text.getRobberText(text.robber.afterEveryoneLeaves, that.endGameRetries)[2], 6000, function () {
                             createjs.Tween.get(that.movieBlocks).to({ alpha: 0 }, 500, createjs.Ease.quadIn).call(function () {
                                 that.isInEndgameCutscene = false;
                                 var count = 0;
@@ -334,11 +403,11 @@
                                         that.isInEndgameCutscene = true;
                                         var msg = '';
                                         if (count === 1)
-                                            msg = text.getRobberText(text.robber.provoked, that.retries)[0];
+                                            msg = text.getRobberText(text.robber.provoked, that.endGameRetries)[0];
                                         else if (count === 2)
-                                            msg = text.getRobberText(text.robber.provoked, that.retries)[1];
+                                            msg = text.getRobberText(text.robber.provoked, that.endGameRetries)[1];
                                         else {
-                                            msg = text.getRobberText(text.robber.provoked, that.retries)[2];
+                                            msg = text.getRobberText(text.robber.provoked, that.endGameRetries)[2];
                                         }
                                         createjs.Tween.get(that.movieBlocks).to({ alpha: 1 }, 500, createjs.Ease.quadIn);
                                         that.robber.say(msg, 3000, function () {

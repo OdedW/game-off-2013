@@ -29,7 +29,7 @@
                     assetManager.playSound('walk');
 //                    this.setItemCount(); //reset items scanned
                     this.moved.fire();
-                } else if (tileManager.collisionMap[newRow][newCol].isNpc) {
+                } else if (tileManager.collisionMap[newRow][newCol] && tileManager.collisionMap[newRow][newCol].isNpc) {
                     var npc = tileManager.collisionMap[newRow][newCol];
                     var that = this;
                     var orgPos = utils.getAbsolutePositionByGridPosition(this.row, this.col);

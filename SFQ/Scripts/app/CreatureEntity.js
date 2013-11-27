@@ -109,7 +109,9 @@
                 //set position in collisionMap
                 tileManager.collisionMap[this.row][this.col] = false;
                 tileManager.collisionMap[row][col] = this;
-
+                if (this.isPlayer)
+                console.log('went from '+this.row+','+this.col+' to '+row+','+col);
+                
                 this.row = row;
                 this.col = col;
 

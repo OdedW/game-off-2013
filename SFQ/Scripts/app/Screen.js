@@ -1,6 +1,6 @@
 ﻿define('Screen',
-    ['createjs'],
-    function (createjs) {
+    ['createjs', 'constants'],
+    function (createjs, constants) {
         return Class.extend({
             init: function() {
                 this.mainView = new createjs.Container();
@@ -9,7 +9,8 @@
                 this.goToGameScreen = $.Callbacks();
                 this.goToCreditsScreen = $.Callbacks();
                 this.goToInstructionsScreen = $.Callbacks();
-
+                this.highlightedColor = 'Khaki';
+                this.unHighlightedColor = 'white';
             },
             handleKeyDown: function(e) {
 
@@ -36,6 +37,34 @@
                         callback();
                     }
                 });
+            },
+            createOutlinedText: function (text, fontsize, y, offset, color, outlineColor) {
+                var main = new createjs.Text(text, fontsize + "px " + constants.FONT + "", color || 'white');
+                main.textAlign = 'center';
+                main.textBaseline = 'middle';
+                main.x = constants.WORLD_WIDTH / 2;
+                main.y = 0;
+                var outline = new createjs.Text(text, fontsize + "px " + constants.FONT + "", outlineColor || 'gray');
+                outline.textAlign = 'center';
+                outline.textBaseline = 'middle';
+                outline.x = constants.WORLD_WIDTH / 2 + offset;
+                outline.y = offset;
+                var container = new createjs.Container();
+                container.x = 0;
+                container.y = y;
+                container.setBounds(0, y, constants.WORLD_WIDTH, fontsize);
+                container.addChild(outline, main);
+                container.main = main;
+                container.outline = outline;
+                container.regY = fontsize / 2;
+                container.setText = function (txt) {
+                    this.main.text = txt;
+                    this.outline.text = txt;
+                };
+                var hit = new createjs.Shape();
+                hit.graphics.beginFill("#000").drawRect(0, -3, constants.WORLD_WIDTH, fontsize + 6);
+                container.hitArea = hit;
+                return container;
             }
         });
     });
