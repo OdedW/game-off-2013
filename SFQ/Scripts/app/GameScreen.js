@@ -372,7 +372,7 @@
                     cashier.movementDestination = { row: that.player.row, col: that.player.col >= 13 ? that.player.col - 1 : that.player.col + 1 };
                     cashier.shouldMove = true;
                     //create a bigger speech bubbles
-                    cashier.createSpeechBubble(constants.TILE_SIZE * 2, constants.TILE_SIZE * 2, -constants.TILE_SIZE / 2, -constants.TILE_SIZE * 2, '13px', 15);
+                    cashier.createSpeechBubble(constants.TILE_SIZE * 2, constants.TILE_SIZE * 2, -constants.TILE_SIZE / 2, '13px', 15);
                     that.gameWorld.removeChild(cashier.view);
                     that.gameWorld.addChild(cashier.view);
                     cashier.sayingSomething.add(function (npc) {

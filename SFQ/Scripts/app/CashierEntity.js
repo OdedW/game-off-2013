@@ -7,8 +7,6 @@
                 this.accuracy = Math.round(Math.random() * 5 + 5);
                 this.speed = this.score - this.accuracy;
                 this._super(row, col);
-                this.speechBubble.x = this.speechBubble.y = constants.TILE_SIZE;
-                this.speechBubble.y = 0;
             },
             createSpriteSheet: function () {
                 var animationSpeed = Math.random() * 0.04 + 0.06;

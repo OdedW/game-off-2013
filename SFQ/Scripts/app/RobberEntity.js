@@ -21,7 +21,7 @@
                 this.view = new createjs.Container();
 
                 //speech bubble
-                this.createSpeechBubble(constants.TILE_SIZE * 2, constants.TILE_SIZE*2, -constants.TILE_SIZE /2, -constants.TILE_SIZE*2, '13px', 15);
+                this.createSpeechBubble(constants.TILE_SIZE * 2, constants.TILE_SIZE*2, -constants.TILE_SIZE /2, '13px', 15);
 
                 this.avatar = new createjs.Sprite(this.spriteSheet, 'idle');
                 this.avatar.regX = this.avatar.regY = this.size.w / 2;

@@ -53,7 +53,7 @@
                 this.view = new createjs.Container();
                 
                 //speech bubble
-                this.createSpeechBubble(constants.TILE_SIZE * 1.5, constants.TILE_SIZE, -constants.TILE_SIZE / 2, -constants.TILE_SIZE, '10px', 11);
+                this.createSpeechBubble(constants.TILE_SIZE * 1.5, constants.TILE_SIZE, -constants.TILE_SIZE / 2, '10px', 12);
                 
                 this.avatar = new createjs.Sprite(this.spriteSheet, 'idle');
                 this.avatar.regX = this.avatar.regY = this.size.w / 2;
@@ -77,24 +77,31 @@
                 this.itemCountLabel.addChild(circle, this.itemCountText);
                 this.view.addChild(this.itemCountLabel);
             },
-            createSpeechBubble: function (width, height, x, y, fontSize, lineHeight) {
+            createSpeechBubble: function (width, height, x, fontSize, lineHeight) {
                 if (this.speechBubble) {
                     this.view.removeChild(this.speechBubble);
                 }
-                this.speechBubble = new createjs.Container();
-                this.speechBubbleContainer = new createjs.Shape();
-                this.speechBubbleContainer.graphics.beginFill("gray").drawRoundRect(0, 0, width, height, 5)
-                    .beginFill("black").drawRoundRect(2, 2, width - 4, height - 4, 5);
-                this.speechBubble.alpha = 0;
-                this.speechBubble.x = x;
-                this.speechBubble.y = y;
                 this.speechBubbleText = new createjs.Text(this.name, fontSize + " " + constants.FONT + "", "white");
                 this.speechBubbleText.lineWidth = width - 10;
                 this.speechBubbleText.x = 6;
                 this.speechBubbleText.y = 2;
                 this.speechBubbleText.lineHeight = lineHeight;
+                this.speechBubbleWidth = width;
+                this.speechBubble = new createjs.Container();
+                this.speechBubbleContainer = new createjs.Shape();
+                this.drawBubbleAndSetY(width, height);
+                this.speechBubble.alpha = 0;
+                this.speechBubble.x = x;
+                
                 this.speechBubble.addChild(this.speechBubbleContainer, this.speechBubbleText);
                 this.view.addChild(this.speechBubble);
+            },
+            drawBubbleAndSetY: function () {
+                var height = this.speechBubbleText.getMeasuredHeight() + 10;
+                this.speechBubbleContainer.graphics.clear().beginFill("gray").drawRoundRect(0, 0, this.speechBubbleWidth, height, 5)
+                   .beginFill("black").drawRoundRect(2, 2, this.speechBubbleWidth - 4, height - 4, 5);
+                this.speechBubble.y = -height;
+
             },
             tick: function(evt) {
             },
@@ -113,16 +120,15 @@
             say: function (text, timeout, callback, dontReposition) {
                 if (this.isDead)
                     return;
+                this.speechBubbleText.text = text;
+                this.drawBubbleAndSetY();
                 if (!dontReposition) {
-                    if (tileManager.collisionMap[this.row - 1][this.col]) { //someone is one square up
-                        this.speechBubble.y = constants.TILE_SIZE;
-                    } else {
-                        this.speechBubble.y = -constants.TILE_SIZE;
-                    }
+                    if (tileManager.collisionMap[this.row - 1][this.col] && !tileManager.collisionMap[this.row + 1][this.col]) { //someone is one square up
+                        this.speechBubble.y = this.speechBubble.y * -1;
+                    } 
                 }
 
                 timeout = timeout || 3000;
-                this.speechBubbleText.text = text;
                 var that = this;
                 
                 createjs.Tween.get(this.speechBubble).to({ alpha: 1 }, 100, createjs.Ease.quadIn).call(function() {
