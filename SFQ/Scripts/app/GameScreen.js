@@ -95,7 +95,37 @@
                 this.pauseMenu.alpha = 0;
                 this.pauseMenuSelectedItem = 0;
                 this.mainView.addChild(this.pauseMenu);
-
+                backToGame.addEventListener("mouseover", function (evt) {
+                    for (var j = 0; j < that.pauseMenu.children.length; j++) {
+                        that.pauseMenu.children[j].main.color = that.pauseMenu.children[j] === backToGame ? that.highlightedColor : that.unHighlightedColor;
+                    }
+                    that.currentHighlightedItem = 0;
+                });
+                backToGame.addEventListener("click", function (evt) {
+                    that.togglePause();
+                });
+                resetCampaign.addEventListener("mouseover", function (evt) {
+                    for (var j = 0; j < that.pauseMenu.children.length; j++) {
+                        that.pauseMenu.children[j].main.color = that.pauseMenu.children[j] === resetCampaign ? that.highlightedColor : that.unHighlightedColor;
+                    }
+                    that.currentHighlightedItem = 0;
+                });
+                resetCampaign.addEventListener("click", function (evt) {
+                    that.reset();
+                });
+                backToMenu.addEventListener("mouseover", function (evt) {
+                    for (var j = 0; j < that.pauseMenu.children.length; j++) {
+                        that.pauseMenu.children[j].main.color = that.pauseMenu.children[j] === backToMenu ? that.highlightedColor : that.unHighlightedColor;
+                    }
+                    that.currentHighlightedItem = 0;
+                });
+                backToMenu.addEventListener("click", function (evt) {
+                    that.goToMainMenuScreen.fire();
+                    setTimeout(function () {
+                        that.pauseMenu.alpha = 0;
+                        that.gameWorld.alpha = 1;
+                    }, 500);
+                });
             },
             togglePause:function() {
                 this.paused = !this.paused;
