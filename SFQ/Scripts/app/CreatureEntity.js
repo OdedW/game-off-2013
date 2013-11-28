@@ -4,10 +4,7 @@
         return BaseEntity.extend({
             init: function (row, col, index) {
                 this.setItemCount();
-                var creatureRow = Math.floor(Math.random() * constants.CREATURES_IN_COLUMN);
-                var creatureColumn = Math.floor(Math.random() * constants.CREATURES_IN_ROW);
-                var creatureIndex = creatureRow * constants.CREATURES_IN_ROW * 2 + creatureColumn;
-                creatureIndex = creatureIndex === 0 ? 1 : creatureIndex;
+                var creatureIndex = this.getRandomCreatureIndex();
                 this.creatureIndex = index === undefined ? creatureIndex : index;
                 var pos = utils.getAbsolutePositionByGridPosition(row, col);
                 this.row = row;
@@ -24,6 +21,15 @@
                 this.died = $.Callbacks();
                 this.sayingSomething = $.Callbacks();
 
+            },
+            getRandomCreatureIndex:function() {
+                var index = 0;
+                do {
+                    var creatureRow = Math.floor(Math.random() * constants.CREATURES_IN_COLUMN);
+                    var creatureColumn = Math.floor(Math.random() * constants.CREATURES_IN_ROW);
+                    index = creatureRow * constants.CREATURES_IN_ROW * 2 + creatureColumn;
+                } while (index === 0 || index === 36 || index === 86 || index === 124); //don't pick hero, cashier, cop or robber
+                return index;
             },
             hit: function () {
                 this.hitPoints--;
