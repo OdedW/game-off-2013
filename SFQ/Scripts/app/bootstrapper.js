@@ -1,7 +1,8 @@
 ﻿define('bootstrapper',
-    ['gameManager'],
-    function (gameManager) {
+    ['gameManager', 'analytics'],
+    function (gameManager, analytics) {
         var run = function () {
+            analytics.track('Page View');
             Math.sign = function (number) { return number ? number < 0 ? -1 : 1 : 0; };
             startApp();
         },

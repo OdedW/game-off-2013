@@ -165,6 +165,7 @@
     <Content Include="Scripts\app\CopEntity.js" />
     <Content Include="Scripts\app\CreatureEntity.js" />
     <Content Include="Scripts\app\CreditsScreen.js" />
+    <Content Include="Scripts\app\analytics.js" />
     <Content Include="Scripts\app\gameManager.js" />
     <Content Include="Scripts\app\GameScreen.js" />
     <Content Include="Scripts\app\InstructionsScreen.js" />
@@ -215,6 +216,7 @@
     <Content Include="Views\Home\Contact.cshtml" />
     <Content Include="Views\Home\Index.cshtml" />
     <Content Include="Scripts\lib\jquery-1.10.2.min.map" />
+    <Content Include="Views\Shared\Analytics.cshtml" />
   </ItemGroup>
   <ItemGroup />
   <ItemGroup>

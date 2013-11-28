@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Configuration;
+using System.Diagnostics;
 using System.Linq;
 using System.Web;
 using System.Web.Mvc;
@@ -10,7 +12,9 @@ namespace SFQ.Controllers
     {
         public ActionResult Index()
         {
-            return View();
+            var token = ConfigurationManager.AppSettings["MixpanelToken"];
+            Console.WriteLine(token);
+             return View();
         }
 
         public ActionResult TileMap()

@@ -1,9 +1,10 @@
 ﻿define('GameScreen',
-    ['createjs', 'Screen', 'PlayerEntity', 'Queue', 'assetManager', 'constants', 'tileManager', 'CopEntity' , 'utils', 'RobberEntity', 'text'],
-    function (createjs, Screen, PlayerEntity, Queue, assetManager, constants, tileManager, CopEntity, utils, RobberEntity, text) {
+    ['createjs', 'Screen', 'PlayerEntity', 'Queue', 'assetManager', 'constants', 'tileManager', 'CopEntity' , 'utils', 'RobberEntity', 'text', 'analytics'],
+    function (createjs, Screen, PlayerEntity, Queue, assetManager, constants, tileManager, CopEntity, utils, RobberEntity, text, analytics) {
         return Screen.extend({
 
             init: function (level, endGameRetries, afterReset) {
+                analytics.track('Started Level', {'Level':level});
                 var that = this;
                 this.currentLevel = level || 0;
                 this.endGameRetries = endGameRetries || 0;
@@ -88,15 +89,16 @@
                 this.paused = false;
                 this.pauseMenu = new createjs.Container();
                 this.pauseMenu.setBounds(0, 0, constants.WORLD_WIDTH, constants.WORLD_HEIGHT);
+                this.levelTitle = this.createOutlinedText('Level ' + (this.currentLevel + 1), 30,100, 3);
                 var backToGame = this.createOutlinedText('Continue shopping', 18, 210, 2, this.highlightedColor);
                 var resetCampaign = this.createOutlinedText('Reset Campaign', 18, 250, 2);
                 var backToMenu = this.createOutlinedText('Back to main menu', 18, 290, 2);
-                this.pauseMenu.addChild(backToGame, resetCampaign, backToMenu);
+                this.pauseMenu.addChild(this.levelTitle, backToGame, resetCampaign, backToMenu);
                 this.pauseMenu.alpha = 0;
                 this.pauseMenuSelectedItem = 0;
                 this.mainView.addChild(this.pauseMenu);
                 backToGame.addEventListener("mouseover", function (evt) {
-                    for (var j = 0; j < that.pauseMenu.children.length; j++) {
+                    for (var j = 1; j < that.pauseMenu.children.length; j++) {
                         that.pauseMenu.children[j].main.color = that.pauseMenu.children[j] === backToGame ? that.highlightedColor : that.unHighlightedColor;
                     }
                     that.currentHighlightedItem = 0;
@@ -105,7 +107,7 @@
                     that.togglePause();
                 });
                 resetCampaign.addEventListener("mouseover", function (evt) {
-                    for (var j = 0; j < that.pauseMenu.children.length; j++) {
+                    for (var j = 1; j < that.pauseMenu.children.length; j++) {
                         that.pauseMenu.children[j].main.color = that.pauseMenu.children[j] === resetCampaign ? that.highlightedColor : that.unHighlightedColor;
                     }
                     that.currentHighlightedItem = 0;
@@ -114,7 +116,7 @@
                     that.reset();
                 });
                 backToMenu.addEventListener("mouseover", function (evt) {
-                    for (var j = 0; j < that.pauseMenu.children.length; j++) {
+                    for (var j = 1; j < that.pauseMenu.children.length; j++) {
                         that.pauseMenu.children[j].main.color = that.pauseMenu.children[j] === backToMenu ? that.highlightedColor : that.unHighlightedColor;
                     }
                     that.currentHighlightedItem = 0;
@@ -311,6 +313,7 @@
                 this.gameWorld.addChild(this.movieBlocks);
             },
             activateEndGame: function () {
+                analytics.track('Reached Endgame');
                 assetManager.stopMusic();
                 var that = this;
                 that.isInEndgameCutscene = true;
@@ -508,6 +511,7 @@
                     setTimeout(function () {
                         that.needsReset = true;
                         that.goToMainMenuScreen.fire();
+                        analytics.track('Finished Game');
                     }, 1000);
                 }
                 if (this.zoomIteration === 0) {
