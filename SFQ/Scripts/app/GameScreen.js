@@ -143,7 +143,7 @@
                     this.createQueue(currentLevel.queues[i]);
                 }
 
-                if (this.currentLevel === window.levels.length - 1){ //last level, trigger end game
+                if (this.currentLevel === 0){//window.levels.length - 1){ //last level, trigger end game
                     this.player.moved.add(function triggerEndGame() {
                         if (that.player.col === 3) {
                             that.player.moved.remove(triggerEndGame);
@@ -465,7 +465,7 @@
                 
                 this.robber.kill(this.player);
                 this.robber.died.add(function () {
-                    assetManager.stopMusic();
+                    assetManager.playMusic('win');
                     createjs.Tween.get(that.movieBlocks).to({ alpha: 1 }, 500, createjs.Ease.quadIn);
                     that.isInEndgameCutscene = true;
                     //pick cashier
@@ -489,9 +489,11 @@
                 var that = this;
                 cashier.say(text.cashierEndTexts[index], 3000, function () {
                     index++;
-                    if (index < text.cashierEndTexts.length)
+                    if (index < text.cashierEndTexts.length) {
                         that.cashierEndDialog.apply(that, [cashier, index]);
-                    else {
+                        if(index == text.cashierEndTexts.length - 1)
+                            assetManager.stopMusic();
+                    } else {
                         that.zoomInterval = setInterval(function() {
                             that.endZoomIn.apply(that);
                         }, 1000);

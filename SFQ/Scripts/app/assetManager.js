@@ -28,6 +28,7 @@
                 { src: "/Content/Sounds/beep.mp3|/Content/Sounds/beep.ogg", id: 'beep' },
                 { src: "/Content/Sounds/bossa.mp3|/Content/Sounds/bossa.ogg", id: 'bossa' },
                 { src: "/Content/Sounds/action.mp3|/Content/Sounds/action.ogg", id: 'action' },
+                { src: "/Content/Sounds/win.mp3|/Content/Sounds/win.ogg", id: 'win' },
             ],
             loadAssets = function () {
                 queue = new createjs.LoadQueue();

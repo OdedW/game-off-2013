@@ -151,6 +151,7 @@
     <Content Include="Content\Sounds\thud.mp3" />
     <Content Include="Content\Sounds\walk.mp3" />
     <None Include="Content\levels.json" />
+    <Content Include="Content\Sounds\win.mp3" />
     <Content Include="favicon.ico" />
     <Content Include="fonts\glyphicons-halflings-regular.svg" />
     <Content Include="Global.asax" />
@@ -189,6 +190,7 @@
     <Content Include="Content\Sounds\bump.ogg" />
     <Content Include="Content\Sounds\action.ogg" />
     <Content Include="Content\Sounds\thud.ogg" />
+    <Content Include="Content\Sounds\win.ogg" />
     <None Include="Scripts\lib\jquery-1.10.2.intellisense.js" />
     <Content Include="Scripts\lib\jquery-1.10.2.js" />
     <Content Include="Scripts\lib\jquery-1.10.2.min.js" />
