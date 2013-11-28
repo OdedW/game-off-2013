@@ -134,7 +134,6 @@
             },
             setupLevel: function () {
                 var that = this;
-                this.spawnedCops = false;
                 var currentLevel = window.levels[this.currentLevel];
                 this.player = new PlayerEntity(currentLevel.entryRow, 0);
                 this.currentLevelTimes = currentLevel.times;
@@ -170,12 +169,11 @@
                 });
 
                 queue.npcDied.add(function () {                    
-                    var cop1 = new CopEntity(args[5], constants.NUM_COLUMNS - 1, that.player, this.spawnedCops);
-                    var cop2 = new CopEntity(args[4], 0, that.player, !this.spawnedCops);
+                    var cop1 = new CopEntity(args[5], constants.NUM_COLUMNS - 1, that.player, that.cops.length == 0);
                     that.cops.push(cop1);
+                    var cop2 = new CopEntity(args[4], 0, that.player, that.cops.length == 0);
                     that.cops.push(cop2);
                     that.gameWorld.addChild(cop1.view, cop2.view);
-                    this.spawnedCops = true;
                 });
                 this.queues.push(queue);
             },
