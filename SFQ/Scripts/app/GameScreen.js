@@ -4,9 +4,9 @@
         return Screen.extend({
 
             init: function (level, endGameRetries, afterReset) {
-                analytics.track('Started Level', {'Level':level});
                 var that = this;
                 this.currentLevel = level || 0;
+                analytics.track('Started Level ' + this.currentLevel);
                 this.endGameRetries = endGameRetries || 0;
                 if (!afterReset) {
                     this._super();
@@ -61,8 +61,6 @@
                     that.hitPointsIcons.splice(that.hitPointsIcons.length - 1, 1);
                 });
 
-               
-                
                 //timer
                 this.timeSinceLevelStart = 0;
                 this.timeLabel = new createjs.Text('00:00', "25px " + constants.FONT, "#0BF50B");
@@ -146,7 +144,7 @@
                     this.createQueue(currentLevel.queues[i]);
                 }
 
-                if (this.currentLevel === 0){//window.levels.length - 1){ //last level, trigger end game
+                if (this.currentLevel === window.levels.length - 1){ //last level, trigger end game
                     this.player.moved.add(function triggerEndGame() {
                         if (that.player.col === 3) {
                             that.player.moved.remove(triggerEndGame);

@@ -56,75 +56,67 @@
                     this.checkForDestinationReached(); //destination was point of beginning
                     this.timeSinceLastMove += evt.delta;
                     if (this.timeSinceLastMove >= this.movementSpeed) {
-                        var nextCol = this.col + Math.sign(this.movementDestination.col - this.col);
-                        var nextRow = this.row + Math.sign(this.movementDestination.row - this.row);
-                        //check for collision
-                        var creature = tileManager.collisionMap[nextRow][nextCol];
-                        if (creature) //occupied
-                        {
-                            if (creature.isPlayer) {
-                                if (!this.ignorePlayerWhenMoving) {
-                                    if (this.killMode) { //hurt player
-                                        var that = this;
-                                        var orgPos = utils.getAbsolutePositionByGridPosition(this.row, this.col);
-                                        var destX = Math.sign(creature.view.x - this.view.x) * 10 + this.view.x,
-                                            destY = Math.sign(creature.view.y - this.view.y) * 10 + this.view.y;
-                                        createjs.Tween.get(that.view).to({ x: destX, y: destY }, 50, createjs.Ease.linear).call(function() {
-                                            creature.bump(that);
-                                            createjs.Tween.get(that.view).to({ x: orgPos.x, y: orgPos.y }, 50, createjs.Ease.linear);
-                                        });
-                                        this.timeSinceLastMove = 0;
-                                        return;
-                                    } else if (nextRow !== this.row) {
-                                        nextRow = this.row; //try to move horizontally
-                                        creature = tileManager.collisionMap[nextRow][nextCol];
-                                        if (creature) //occupied
-                                        {
-                                            if (creature.isPlayer) {
-                                                if (!this.ignorePlayerWhenMoving) {
-                                                    if (this.killMode) { //hurt player
-                                                        var orgPos = utils.getAbsolutePositionByGridPosition(this.row, this.col);
-                                                        var destX = Math.sign(creature.view.x - this.view.x) * 10 + this.view.x,
-                                                            destY = Math.sign(creature.view.y - this.view.y) * 10 + this.view.y;
-                                                        createjs.Tween.get(that.view).to({ x: destX, y: destY }, 50, createjs.Ease.linear).call(function() {
-                                                            creature.bump(that);
-                                                            createjs.Tween.get(that.view).to({ x: orgPos.x, y: orgPos.y }, 50, createjs.Ease.linear);
-                                                        });
-                                                        this.timeSinceLastMove = 0;
-                                                        return;
-                                                    } else {
-                                                        this.playerIsBlockingMove.fire(this);
-                                                        this.timeSinceLastMove = 0;
-                                                        return; //wait in place
-                                                    }
-                                                }
-                                            } else if (!this.ignoreNpcsWhenMoving) {
-                                                this.timeSinceLastMove = 0;
-                                                return; //wait in place
-                                            }
-                                        }
-                                    } else {
-                                        this.playerIsBlockingMove.fire(this);
-                                        this.timeSinceLastMove = 0;
-                                        return; //wait in place
-                                    }
-                                    
-                                }
-                            } else if (!this.ignoreNpcsWhenMoving){
-                                nextRow = this.row; //try to move horizontally
-                                if (tileManager.collisionMap[nextRow][nextCol]) //occupied
-                                {
-                                    this.timeSinceLastMove = 0;
-                                    return; //wait in place
-                                }
-                            }
+                        var nextPosition = this.getNextPosition();
+                        if (nextPosition.col != this.col || nextPosition.row !== this.row) {
+                            this.setPosition(nextPosition.row, nextPosition.col);
+                            this.checkForDestinationReached(); //destination reached
+                            this.moved.fire(this);
                         }
-                        this.setPosition(nextRow, nextCol);
                         this.timeSinceLastMove = 0;
-                        this.checkForDestinationReached(); //destination reached
-                        this.moved.fire(this);
                     }
                 }
+            },
+            getNextPosition: function () {
+//                if (this.movementDestination.row == 4 && this.movementDestination.col == 15)
+//                    debugger;
+                var nextCol = this.col + Math.sign(this.movementDestination.col - this.col);
+                var nextRow = this.row + Math.sign(this.movementDestination.row - this.row);
+                //check for collision
+                var collisionResult = this.checkForCollision(nextRow, nextCol);
+                if (collisionResult.bumpedPlayer) { //this is it, wait for next step
+                    nextRow = this.row;
+                    nextCol = this.col;
+                } else if (collisionResult.collision) { //has collision, try to find another way
+                    if (nextRow != this.row) {
+                        nextRow = this.row;
+                        collisionResult = this.checkForCollision(nextRow, nextCol);
+                        if (collisionResult.collision) {
+                            nextCol = this.col; //cant advance
+                        }
+                    }
+                    else {
+                        nextCol = this.col; //cant advance
+                    }
+                } 
+                return { row: nextRow, col: nextCol };
+            },
+            checkForCollision: function (row, col) {
+                var collision = false,
+                    bumpedPlayer = false;
+                
+                var creature = tileManager.collisionMap[row][col];
+                if (creature) //occupied
+                {
+                    if (creature.isPlayer) {
+                        collision = !this.ignorePlayerWhenMoving;
+                        bumpedPlayer = !this.ignorePlayerWhenMoving && this.killMode && this.bumpPlayer(creature);
+                        this.playerIsBlockingMove.fire(this);
+                    } else {
+                        collision = !creature.isNpc || !this.ignoreNpcsWhenMoving;
+                    }
+                }
+                return { collision: collision, bumpedPlayer: bumpedPlayer};
+            },
+            bumpPlayer:function(player) {
+                var that = this;
+                var orgPos = utils.getAbsolutePositionByGridPosition(this.row, this.col);
+                var destX = Math.sign(player.view.x - this.view.x) * 10 + this.view.x,
+                    destY = Math.sign(player.view.y - this.view.y) * 10 + this.view.y;
+                createjs.Tween.get(that.view).to({ x: destX, y: destY }, 50, createjs.Ease.linear).call(function() {
+                    player.bump(that);
+                    createjs.Tween.get(that.view).to({ x: orgPos.x, y: orgPos.y }, 50, createjs.Ease.linear);
+                });
+                return true;
             },
             checkForDestinationReached: function () {
                 if (this.col === this.movementDestination.col &&
