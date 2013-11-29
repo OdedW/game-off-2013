@@ -26,7 +26,7 @@
 
             },
             initializeGraphics = function () {
-                assetManager.toggleMute();
+//                assetManager.toggleMute();
 
                 screenManager.init();
                 for (var i = 0; i < screenManager.screens.length; i++) {

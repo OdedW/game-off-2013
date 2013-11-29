@@ -14,7 +14,7 @@
                 player.moved.add(function() {
                     that.movementDestination = { row: player.row, col: player.col };
                 });
-                this.hitPoints = 5;
+                this.hitPoints = 3;
             }
         });
     });

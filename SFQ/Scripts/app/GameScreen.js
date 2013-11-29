@@ -489,7 +489,7 @@
                 
                 this.robber.kill(this.player);
                 this.robber.died.add(function () {
-                    assetManager.playMusic('win');
+                    assetManager.playMusic('win',0.3);
                     createjs.Tween.get(that.movieBlocks).to({ alpha: 1 }, 500, createjs.Ease.quadIn);
                     that.isInEndgameCutscene = true;
                     //pick cashier

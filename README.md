@@ -1,24 +1,33 @@
 ## Super Fantasy Queue
 
-Every hero and every monster needs to take a break and get some groceries at some point, a little troll's milk, some spider cornflakes, or head to the home depot for oil for ye old armor. 
+Every hero and every monster needs to take some time for grocery shopping at some point. Some troll's milk and spider cornflakes for the kids, oil for ye old armor or anew buckle for the +1 dexterity belt.
 
-It is then that they have to make the most important decision of their lives
+It is then that they have to make the most important decision of their lives - which line to stand in. 
+
+Jump in and make your decision whether to *change* lines or stay put.
+
+Includes 5 awesome levels + a surprise ending!
 
 ![Super Fantasy Queue](http://i.imgur.com/My7PTSU.gif)
 
+## Libraries
+• [CreateJS](http://www.createjs.com) • [RequireJS](http://requirejs.org/) • [Simple JS Inheritence](http://ejohn.org/blog/simple-javascript-inheritance/).
+
+## Credits
+
+• All graphic assets are by [Oryx Design Labs](http://oryxdesignlab.com) and licensed to InjaGames. They cannot be re-used in any way. To purchase this set or any of the many other great sets go to [Oryx Design Labs](http://oryxdesignlab.com).
+
+• Cash register icon by www.fatcow.com
+
+• Thud sound by Speedenza from freesound
+
 ## License
-
-All graphic assets are by [Oryx Design Labs](http://oryxdesignlab.com) and licensed to InjaGames. They cannot be re-used in any way.
-
-To purchase this set or any of the many other great sets go to [Oryx Design Labs](http://oryxdesignlab.com).
-
 
 All libraries code is licensed under the corresponding library's license.
 
-The game engine is based on [CreateJS](http://www.createjs.com).
+All of the music was created by Inja Games. Contact us if you want to use it.
 
-
-The rest of the source code is licensed  under the MIT license:
+The rest of the source code is licensed under the MIT license:
 (The MIT License)
 
 Copyright (c) 2013 Oded Welgreen InjaGames@outlook.com
