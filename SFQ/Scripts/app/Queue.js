@@ -168,7 +168,7 @@
                 creature.say(text.getRandomText(text.mistakeTexts), 3000, function () {
                     if (this.isInEndgame)
                         return;
-                    that.cashier.say("Sorry, I'll have to do it again", 3000, function () {
+                    that.cashier.say(text.getRandomText(text.cashierMistakeTexts), 3000, function () {
                         creature.itemCount = creature.initialItemCount;
                         that.mistakeDialogStarted = false;
                     }, 2000);
