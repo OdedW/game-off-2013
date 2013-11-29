@@ -128,6 +128,8 @@
     <Content Include="Content\Images\bg.png" />
     <Content Include="Content\Images\cashier.png" />
     <Content Include="Content\Images\cash_register.png" />
+    <Content Include="Content\Images\email.png" />
+    <Content Include="Content\Images\github.png" />
     <Content Include="Content\Images\heart.png" />
     <Content Include="Content\Images\logo.png" />
     <Content Include="Content\Images\muted.png" />
@@ -135,9 +137,10 @@
     <Content Include="Content\Images\oryx_items.png" />
     <Content Include="Content\Images\robber.png" />
     <Content Include="Content\Images\robberHeart.png" />
+    <Content Include="Content\Images\soundcloud.png" />
     <Content Include="Content\Images\table.png" />
+    <Content Include="Content\Images\twitter.png" />
     <Content Include="Content\Images\unmuted.png" />
-    <Content Include="Content\mooning.png" />
     <Content Include="Content\Site.css">
       <DependentUpon>Site.less</DependentUpon>
     </Content>
@@ -212,8 +215,6 @@
     <Content Include="Views\_ViewStart.cshtml" />
     <Content Include="Views\Shared\Error.cshtml" />
     <Content Include="Views\Shared\_Layout.cshtml" />
-    <Content Include="Views\Home\About.cshtml" />
-    <Content Include="Views\Home\Contact.cshtml" />
     <Content Include="Views\Home\Index.cshtml" />
     <Content Include="Scripts\lib\jquery-1.10.2.min.map" />
     <Content Include="Views\Shared\Analytics.cshtml" />

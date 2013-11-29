@@ -1,8 +1,7 @@
 ﻿body {
   padding-top: 50px;
   padding-bottom: 20px;
-  background-color: black;
-  background-image: url(mooning.png);
+  background-color: #434343;
 }
 /* Set padding to keep content from hitting the edges */
 .body-content {
@@ -50,9 +49,43 @@ input[type="checkbox"].input-validation-error {
   height: 100%;
   position: absolute;
 }
-@font-face {
-  font-family: 04B_03__;
-  src: url('04B_03__.TTF') format('truetype');
+footer {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  width: 100%;
+  text-align: center;
+  background-color: #2F2F2F;
+  color: LightGoldenRodYellow;
+  list-style-type: none;
+  font-family: calibri;
+  padding: 20px 0px;
+  border-top: 1px solid #DADAB2;
+}
+footer ul {
+  padding: 0px;
+}
+footer ul li {
+  display: inline-block;
+  margin-right: 5px;
+  margin-left: 5px;
+}
+footer ul li img {
+  height: 48px;
+  width: 48px;
+  position: relative;
+  /*Reflection*/
+  -webkit-box-reflect: below 0px -webkit-gradient(linear, left top, left bottom, from(transparent), color-stop(0.7, transparent), to(rgba(0, 0, 0, 0.1)));
+}
+footer ul li img:hover {
+  opacity: 1;
+  /*Reflection*/
+  -webkit-box-reflect: below 0px -webkit-gradient(linear, left top, left bottom, from(transparent), color-stop(0.7, transparent), to(rgba(0, 0, 0, 0.4)));
+  /*Glow*/
+}
+footer ul li img:active {
+  top: 1px;
 }
 @font-face {
   font-family: Minecraftia;
