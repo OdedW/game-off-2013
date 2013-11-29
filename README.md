@@ -8,7 +8,7 @@ Jump in and make your decision whether to *change* lines or stay put.
 
 Includes 5 awesome levels + a surprise ending!
 
-![Super Fantasy Queue](http://i.imgur.com/My7PTSU.gif)
+![Super Fantasy Queue](http://i.imgur.com/AT5aDbj.gif)
 
 ## Libraries
 • [CreateJS](http://www.createjs.com) • [RequireJS](http://requirejs.org/) • [Simple JS Inheritence](http://ejohn.org/blog/simple-javascript-inheritance/).
