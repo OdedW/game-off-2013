@@ -25,7 +25,7 @@ Includes 5 awesome levels + a surprise ending!
 
 All libraries code is licensed under the corresponding library's license.
 
-All of the music was created by Inja Games. Contact us if you want to use it.
+All of the music was created by [Inja Games](https://twitter.com/InjaGames). Contact us if you want to use it.
 
 The rest of the source code is licensed under the MIT license:
 (The MIT License)

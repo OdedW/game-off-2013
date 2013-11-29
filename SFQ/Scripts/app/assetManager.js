@@ -18,7 +18,7 @@
                 { src: "/Content/Images/logo.png", id: "logo" },
                 { src: "/Content/Images/muted.png", id: "muted" },
                 { src: "/Content/Images/unmuted.png", id: "unmuted" },
-                { src: "/Content/Images/cash_register.png", id: "cashRegister" }, //TODO:  FatCow Web Hosting - http://www.fatcow.com/ 
+                { src: "/Content/Images/cash_register.png", id: "cashRegister" },
 
 
                 //sounds

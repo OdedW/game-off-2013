@@ -211,8 +211,8 @@
             },
             handleKeyDown: function (e) {
                 var that = this;
-                if (e.keyCode == constants.KEY_E)
-                    this.activateEndGame();
+//                if (e.keyCode == constants.KEY_E)
+//                    this.activateEndGame();
                 if (e.keyCode === constants.KEY_SPACE || e.keyCode === constants.KEY_ENTER) {
                     if (this.npcInDialog)
                         this.npcInDialog.stopSayingSomething();

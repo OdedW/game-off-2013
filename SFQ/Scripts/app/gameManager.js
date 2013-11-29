@@ -21,9 +21,6 @@
                 });
 
                 stage.addChild(screenManager.splashScreen().mainView);
-
-                //temp
-
             },
             initializeGraphics = function () {
 //                assetManager.toggleMute();

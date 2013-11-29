@@ -5,8 +5,8 @@
 
             },
             track = function(eventName, extraData) {
-                //                mixpanel.track(eventName, extraData);
-                console.log('track: '+eventName);
+                                mixpanel.track(eventName, extraData);
+//                console.log('track: '+eventName);
                 
             };
 
