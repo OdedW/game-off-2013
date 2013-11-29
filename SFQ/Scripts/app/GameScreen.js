@@ -16,15 +16,18 @@
                 this.isInEndGame = false;
 
                 //win text
-                this.endStateText = new createjs.Text('Checked out!', "36px Minecraftia", "white");
-                this.endStateText.alpha = 0;               
-                this.endStateText.textAlign = 'center';
-                this.endStateText.textBaseline = 'middle';
-                this.pressAnyKeyText = new createjs.Text('press any key', "16px Minecraftia", "white");
-                this.pressAnyKeyText.alpha = 0;
-                this.pressAnyKeyText.textAlign = 'center';
-                this.pressAnyKeyText.textBaseline = 'middle';
-                this.mainView.addChild(this.endStateText, this.pressAnyKeyText);
+                this.endStateText = this.createOutlinedText('', 36, 0, 4);
+                this.endStateText.setLineWidth(constants.WORLD_WIDTH - 100);
+                this.endStateText.setLineHeight(39);
+                this.winStateText = this.createOutlinedText('', 20, 0, 2);
+                this.winStateText.setLineHeight(23);
+                this.winStateText.setLineWidth(constants.WORLD_WIDTH - 100);
+                this.winStateText.alpha = 0;
+                this.pressAnyKeyText = this.createOutlinedText('press any key', 12, 0, 2);
+                this.endStateContainer = new createjs.Container();
+                this.endStateContainer.alpha = 0;
+                this.endStateContainer.addChild(this.endStateText,this.winStateText, this.pressAnyKeyText);
+                this.mainView.addChild(this.endStateContainer);
               
                 //gameWorld
                 var bg = new createjs.Bitmap(assetManager.images.bg);
@@ -38,11 +41,11 @@
                 this.inLoseState = false;
                 this.player.winState.add(function () {
                     that.inWinState = true;
-                    that.showEndState.apply(that, ['Checked out!']);
+                    that.showEndState.apply(that, [text.getRandomText(text.checkedOutTexts)]);
                 });
-                this.player.loseState.add(function (text) {
+                this.player.loseState.add(function (txt) {
                     that.inLoseState = true;
-                    that.showEndState.apply(that, [text]);
+                    that.showEndState.apply(that, [txt]);
                 });
                 
                 //hitpoints
@@ -93,7 +96,7 @@
                 var backToMenu = this.createOutlinedText('Back to main menu', 18, 290, 2);
                 this.pauseMenu.addChild(this.levelTitle, backToGame, resetCampaign, backToMenu);
                 this.pauseMenu.alpha = 0;
-                this.pauseMenuSelectedItem = 0;
+                this.pauseMenuSelectedItem = 1;
                 this.mainView.addChild(this.pauseMenu);
                 backToGame.addEventListener("mouseover", function (evt) {
                     for (var j = 1; j < that.pauseMenu.children.length; j++) {
@@ -111,7 +114,7 @@
                     that.currentHighlightedItem = 0;
                 });
                 resetCampaign.addEventListener("click", function (evt) {
-                    that.reset();
+                    that.reset(true);
                 });
                 backToMenu.addEventListener("mouseover", function (evt) {
                     for (var j = 1; j < that.pauseMenu.children.length; j++) {
@@ -143,7 +146,7 @@
                     this.createQueue(currentLevel.queues[i]);
                 }
 
-                if (this.currentLevel === 0){//window.levels.length - 1){ //last level, trigger end game
+                if (this.currentLevel === window.levels.length - 1){ //last level, trigger end game
                     this.player.moved.add(function triggerEndGame() {
                         if (that.player.col === 3) {
                             that.player.moved.remove(triggerEndGame);
@@ -177,18 +180,39 @@
                 });
                 this.queues.push(queue);
             },
-            showEndState:function(text) {
-                this.endStateText.text = text;
-                this.endStateText.x = constants.WORLD_WIDTH / 2;
-                this.endStateText.y = constants.WORLD_HEIGHT / 2 - 15;
-                this.pressAnyKeyText.x = constants.WORLD_WIDTH / 2;
-                this.pressAnyKeyText.y = constants.WORLD_HEIGHT / 2 + 25;
+            showEndState:function(txt) {
+                this.endStateText.setText(txt);
+                var h = this.endStateText.main.getMeasuredHeight();
+                this.endStateText.y = constants.WORLD_HEIGHT / 2 - h * 2 / 3;
+                if (this.inWinState) {
+                    this.winStateText.alpha = 1;
+                    this.winStateText.y = this.endStateText.y + h + 10;
+                    this.winStateText.setText(this.getWinStateText());
+                    this.pressAnyKeyText.y = this.winStateText.y + this.winStateText.main.getMeasuredHeight() + 20;
+
+                } else {
+                    this.winStateText.alpha = 0;
+                    this.pressAnyKeyText.y = this.endStateText.y + h + 20;
+                }
                 createjs.Tween.get(this.gameWorld).to({ alpha: 0.2 }, 200, createjs.Ease.quadIn);
-                createjs.Tween.get(this.endStateText).to({ alpha: 1 }, 200, createjs.Ease.quadIn);
-                createjs.Tween.get(this.pressAnyKeyText).to({ alpha: 1 }, 200, createjs.Ease.quadIn);
+                createjs.Tween.get(this.endStateContainer).to({ alpha: 1 }, 200, createjs.Ease.quadIn);
+            },
+            getWinStateText:function() {
+                var time = this.timeSinceLevelStart;
+                var txt = 'You checked out in ' + utils.getTimespanInText(time) + '! ';
+                if (time/1000 < this.currentLevelTimes[0]) 
+                    txt += text.getRandomText(text.checkedOutFastTexts);
+                else if (time / 1000 < this.currentLevelTimes[1])
+                    txt += text.getRandomText(text.checkedOutMiddleTexts);
+                else
+                    txt += text.getRandomText(text.checkedOutSlowTexts);
+                return txt;
+
             },
             handleKeyDown: function (e) {
                 var that = this;
+                if (e.keyCode == constants.KEY_E)
+                    this.activateEndGame();
                 if (e.keyCode === constants.KEY_SPACE || e.keyCode === constants.KEY_ENTER) {
                     if (this.npcInDialog)
                         this.npcInDialog.stopSayingSomething();
@@ -207,28 +231,28 @@
 
                 if (this.paused) {
                     if (e.keyCode === constants.KEY_S || e.keyCode === constants.KEY_DOWN) {
-                        for (var i = 0; i < this.pauseMenu.children.length; i++) {
+                        for (var i = 1; i < this.pauseMenu.children.length; i++) {
                             this.pauseMenu.children[i].main.color = this.unHighlightedColor;
                         }
                         this.pauseMenuSelectedItem++;
-                        if (this.pauseMenuSelectedItem == this.pauseMenu.children.length) this.pauseMenuSelectedItem = 0;
+                        if (this.pauseMenuSelectedItem == this.pauseMenu.children.length) this.pauseMenuSelectedItem = 1;
                         this.pauseMenu.children[this.pauseMenuSelectedItem].main.color = this.highlightedColor;
                     } else if(e.keyCode === constants.KEY_W || e.keyCode === constants.KEY_UP) {
-                        for (var i = 0; i < this.pauseMenu.children.length; i++) {
+                        for (var i = 1; i < this.pauseMenu.children.length; i++) {
                             this.pauseMenu.children[i].main.color = this.unHighlightedColor;
                         }
                         this.pauseMenuSelectedItem--;
-                        if (this.pauseMenuSelectedItem == -1) this.pauseMenuSelectedItem = this.pauseMenu.children.length-1;
+                        if (this.pauseMenuSelectedItem == 0) this.pauseMenuSelectedItem = this.pauseMenu.children.length-1;
                         this.pauseMenu.children[this.pauseMenuSelectedItem].main.color = this.highlightedColor;
                     }
                     if (e.keyCode === constants.KEY_SPACE || e.keyCode === constants.KEY_ENTER) {
-                        if (this.pauseMenuSelectedItem === 0) {
+                        if (this.pauseMenuSelectedItem === 1) {
                             this.togglePause();
                         }
-                        if (this.pauseMenuSelectedItem === 1) {
+                        if (this.pauseMenuSelectedItem === 2) {
                             this.reset();
                         }
-                         else if (this.pauseMenuSelectedItem === 2) {
+                         else if (this.pauseMenuSelectedItem === 3) {
                              this.goToMainMenuScreen.fire();
                             setTimeout(function() {
                                 that.pauseMenu.alpha = 0;
@@ -257,7 +281,7 @@
             },
             activate: function () {               
                 this.currentLevel = 0;
-                assetManager.playMusic('bossa', 0.3);
+                assetManager.playMusic('bossa', 0.2);
                 if (this.needsReset)
                     this.reset();
                 this.paused = false;
@@ -289,13 +313,13 @@
                 //item count
                 this.itemCountLabel.text = this.player.itemCount;
             },
-            reset: function () {
+            reset: function (resetLevels) {
                 var that = this;
-                
+                var level = resetLevels ? 0 : that.currentLevel;
                 this.hide(function() {
                     that.mainView.removeAllChildren();
                     tileManager.clearCollisionMap();
-                    that.init.apply(that, [that.currentLevel, that.endGameRetries + (that.inLoseState && that.isInEndGame ? 1 : 0), true]);
+                    that.init.apply(that, [level, that.endGameRetries + (that.inLoseState && that.isInEndGame ? 1 : 0), true]);
                     that.show();
                 });
                 
@@ -320,7 +344,7 @@
                     that.queues[j].isInEndgame = true;
                 }
                 setTimeout(function () {
-                    assetManager.playMusic('action', 0.4);
+                    assetManager.playMusic('action', 0.5);
 
                     //robber hitpoints
                     that.robber = new RobberEntity();

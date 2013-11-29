@@ -6,6 +6,7 @@
                 this.score = Math.round(Math.random() * 2 + 14);
                 this.accuracy = Math.round(Math.random() * 5 + 5);
                 this.speed = this.score - this.accuracy;
+                this.timeToScan = constants.BASE_SCANE_TIME * (1 + (10 - this.speed) / 10);
                 this._super(row, col);
             },
             createSpriteSheet: function () {

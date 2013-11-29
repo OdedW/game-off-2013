@@ -23,10 +23,11 @@
                 stage.addChild(screenManager.splashScreen().mainView);
 
                 //temp
-                //assetManager.toggleMute();
 
             },
-            initializeGraphics = function() {
+            initializeGraphics = function () {
+                assetManager.toggleMute();
+
                 screenManager.init();
                 for (var i = 0; i < screenManager.screens.length; i++) {
                     stage.addChild(screenManager.screens[i].mainView);

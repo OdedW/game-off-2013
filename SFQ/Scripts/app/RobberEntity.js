@@ -4,6 +4,7 @@
             init: function () {
                 this._super(5, 14);
                 this.hitPoints = 9;
+                this.isRobber = true;
 
             },
             createSpriteSheet: function () {

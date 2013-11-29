@@ -74,17 +74,45 @@
                 'Free deliveries for life!',
                 'You will never have to stand in line AGAIN!'
             ],
-
+            checkedOutTexts = [
+                'Checked out!'
+            ],
+            killedByCopTexts = [
+                "Crime doesn't (always) pay!"
+            ],
+            killedByRobberTexts = [
+                "Be quick or be dead!"  
+            ],
+            killedByNpcTexts = [
+                "Cutting in line can be dangerous!"
+            ],
             getRobberText = function(arr, index) {
                 if (index >= arr.length)
                     return arr[arr.length - 1];
                 else 
                     return arr[index];
             },
+            checkedOutFastTexts = [
+                "Plenty of time to drink some potions with the guys before heading off to the dungeon"
+            ],
+            checkedOutMiddleTexts = [
+                "Enough time to oil the sword, but not the armor"
+            ],
+            checkedOutSlowTexts = [
+                "You won't have enough time to pick up your belt of dexterity +1 from the tailor"
+            ],
+            
         getRandomText = function (arr) {
             return arr[Math.floor(Math.random() * arr.length)];
         };
         return {
+            checkedOutFastTexts: checkedOutFastTexts,
+            checkedOutSlowTexts:checkedOutSlowTexts,
+            checkedOutMiddleTexts:checkedOutMiddleTexts,
+            killedByNpcTexts: killedByNpcTexts,
+            checkedOutTexts: checkedOutTexts,
+            killedByCopTexts: killedByCopTexts,
+            killedByRobberTexts: killedByRobberTexts,
             getCashierName: getCashierName,
             mistakeTexts: mistakeTexts,
             getRandomText: getRandomText,

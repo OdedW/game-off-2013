@@ -23,7 +23,7 @@
             FONT: 'Minecraftia',
 
             //time
-            BASE_SCANE_TIME: 1000, //ms
+            BASE_SCANE_TIME: 800, //ms
             MIN_MOVEMENT_SPEED: 400, //ms per move
             MAX_MOVEMENT_SPEED: 900, //ms per move
             TIME_TO_MAYBE_ADD_NPC_TO_QUEUE: 4000, //ms

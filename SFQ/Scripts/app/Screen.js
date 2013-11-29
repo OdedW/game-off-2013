@@ -61,6 +61,14 @@
                     this.main.text = txt;
                     this.outline.text = txt;
                 };
+                container.setLineWidth = function(width) {
+                    this.main.lineWidth = width;
+                    this.outline.lineWidth = width;                    
+                };
+                container.setLineHeight = function (height) {
+                    this.main.lineHeight = height;
+                    this.outline.lineHeight = height;
+                };
                 var hit = new createjs.Shape();
                 hit.graphics.beginFill("#000").drawRect(0, -3, constants.WORLD_WIDTH, fontsize + 6);
                 container.hitArea = hit;

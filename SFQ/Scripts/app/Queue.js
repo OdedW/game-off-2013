@@ -120,7 +120,7 @@
                 if (creature && !this.cashier.isDead) {
                     if (!this.mistakeDialogStarted) {
                         this.timeSinceLastScan += evt.delta;
-                        if (this.timeSinceLastScan >= constants.BASE_SCANE_TIME) {
+                        if (this.timeSinceLastScan >= this.cashier.timeToScan) {
                             this.timeSinceLastScan = 0;
                             this.scan(creature);
                         }

@@ -42,7 +42,7 @@
                 }, 1000);
             },
             activate:function() {
-                assetManager.playMusic('bossa',0.3);
+                assetManager.playMusic('bossa',0.2);
             },
             setupMouseInteraction:function() {
                 var that = this;

@@ -55,8 +55,14 @@
                 this.hit();
                 if (this.hitPoints == 0) {
                     this.die(function () {
-                        var text = npc.isCop ? "Crime doesn't (always) pay!" : 'Cutting in line is dangerous!';
-                        that.loseState.fire(text);
+                        var txt;
+                        if (npc.isCop)
+                            txt = text.getRandomText(text.killedByCopTexts);
+                        else if (npc.isRobber) 
+                            txt = text.getRandomText(text.killedByRobberTexts);
+                        else 
+                            txt = text.getRandomText(text.killedByNpcTexts);
+                        that.loseState.fire(txt);
                     });
                 }
             },
