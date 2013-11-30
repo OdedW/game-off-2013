@@ -155,8 +155,8 @@
             ],
             checkedOutMiddleTexts = [
                 "Enough time to oil the sword, but not the armor",
-                "A job not so well done",
-                "Stayed a while, and listened?"
+                "Stayed a while, and listened?",
+                "Took you a while, but you got there"
             ],
             checkedOutSlowTexts = [
                 "You won't have enough time to pick up your belt of dexterity +1 from the tailor",
