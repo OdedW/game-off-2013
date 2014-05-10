@@ -161,6 +161,9 @@
     <Content Include="fonts\glyphicons-halflings-regular.svg" />
     <Content Include="Global.asax" />
     <Content Include="Content\Minecraftia.ttf" />
+    <Content Include="Content\Site.css.map">
+      <DependentUpon>Site.css</DependentUpon>
+    </Content>
     <None Include="Content\Site.less" />
     <Content Include="Scripts\app\assetManager.js" />
     <Content Include="Scripts\app\BaseEntity.js" />
