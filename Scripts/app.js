@@ -2173,7 +2173,7 @@ define('SplashScreen',
                 var that = this;
                 
                 this._super();
-                this.logo = new createjs.Bitmap('/content/images/logo.png');
+                this.logo = new createjs.Bitmap('./Content/Images/logo.png');
                 this.logo.y = 80;
                 this.logo.x = 230;
 //                this.logo.scaleX = this.logo.scaleY = 1.5;
