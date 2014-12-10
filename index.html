@@ -1,0 +1,63 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Super Fantasy Queue</title>
+    <link href="./Content/bootstrap.css" media="all" rel="stylesheet" type="text/css" />
+    <link href="./Content/site.css" media="all" rel="stylesheet" type="text/css" />
+    <script src="./Scripts/modernizr-2.6.2.js" type="application/javascript"></script>
+    <meta name="description" content="Super Fantasy Queue | made for Github's 2013 game-off'" />
+    <meta name="author" content="Oded Welgreen">
+    <meta name="keywords" content="Game off,GitHub,HTML5,Web game">
+</head>
+<body>
+
+<div class="container body-content">
+    <div class="container">
+        <div id="canvas-container">
+            <canvas id="game-canvas" width="720" height="528"></canvas>
+        </div>
+    </div>
+</div>
+<footer>
+    <p>Made by Oded Welgreen for Github's 2013 game-off • View the source code on <a href="https://github.com/odedw/game-off-2013">GitHub</a></span></p>
+    <ul>
+        <li><a href="https://twitter.com/injagames" target="_blank"><img src="./Content/Images/twitter.png" /> </a></li>
+        <li><a href="https://github.com/OdedW/game-off-2013" target="_blank"><img src="./Content/Images/github.png" /> </a></li>
+        <li><a href="https://soundcloud.com/injagames" target="_blank"> <img src="./Content/Images/soundcloud.png" /> </a></li>
+        <li><a href="mailto:oded.welgreen@gmail.com" target="_top"><img src="./Content/Images/email.png" /> </a></li>
+    </ul>
+    <p>
+        <span>Works best on WebKit •</span>
+        <a href="http://www.google.com/chrome" target="_blank">Chrome</a>
+        <span>or</span>
+        <a href="http://www.apple.com/safari" target="_blank">Safari</a>
+    </p>
+</footer>
+<script src="./Scripts/lib.js" type="application/javascript"></script>
+<script src="./Scripts/data.js" type="application/javascript"></script>
+<script src="./Scripts/app.js" type="application/javascript"></script>
+
+</body>
+</html>
+
+
+
+
+
+
+<!-- start Mixpanel -->
+<script type="text/javascript">
+    (function (e, b) {
+        if (!b.__SV) {
+            var a, f, i, g; window.mixpanel = b; a = e.createElement("script"); a.type = "text/javascript"; a.async = !0; a.src = ("https:" === e.location.protocol ? "https:" : "http:") + '//cdn.mxpnl.com/libs/mixpanel-2.2.min.js'; f = e.getElementsByTagName("script")[0]; f.parentNode.insertBefore(a, f); b._i = []; b.init = function (a, e, d) {
+                function f(b, h) { var a = h.split("."); 2 == a.length && (b = b[a[0]], h = a[1]); b[h] = function () { b.push([h].concat(Array.prototype.slice.call(arguments, 0))) } } var c = b; "undefined" !==
+                typeof d ? c = b[d] = [] : d = "mixpanel"; c.people = c.people || []; c.toString = function (b) { var a = "mixpanel"; "mixpanel" !== d && (a += "." + d); b || (a += " (stub)"); return a }; c.people.toString = function () { return c.toString(1) + ".people (stub)" }; i = "disable track track_pageview track_links track_forms register register_once alias unregister identify name_tag set_config people.set people.set_once people.increment people.append people.track_charge people.clear_charges people.delete_user".split(" "); for (g = 0; g < i.length; g++) f(c, i[g]);
+                b._i.push([a, e, d])
+            }; b.__SV = 1.2
+        }
+    })(document, window.mixpanel || []);
+    mixpanel.init('9a5b9a8d8a291145ec160da5e4b9dee7');
+</script>
+<!-- end Mixpanel -->
